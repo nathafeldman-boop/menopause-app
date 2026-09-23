@@ -1,0 +1,409 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
+  public: {
+    Tables: {
+      coach_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      coach_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "coach_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credit_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          reason: string
+          related_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          reason: string
+          related_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          reason?: string
+          related_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ingredient_recipes: {
+        Row: {
+          created_at: string
+          id: string
+          ingredients_input: string[]
+          recipes: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ingredients_input: string[]
+          recipes: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ingredients_input?: string[]
+          recipes?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      meal_analyses: {
+        Row: {
+          calcium_flag: string | null
+          carbs_level: string | null
+          created_at: string
+          fat_level: string | null
+          good_points: string[]
+          id: string
+          image_path: string
+          improve_points: string[]
+          meal_name: string | null
+          protein_flag: string | null
+          raw_ai: Json | null
+          score: number | null
+          sugar_flag: string | null
+          suggestions: string[]
+          user_id: string
+          veg_fiber_flag: string | null
+        }
+        Insert: {
+          calcium_flag?: string | null
+          carbs_level?: string | null
+          created_at?: string
+          fat_level?: string | null
+          good_points?: string[]
+          id?: string
+          image_path: string
+          improve_points?: string[]
+          meal_name?: string | null
+          protein_flag?: string | null
+          raw_ai?: Json | null
+          score?: number | null
+          sugar_flag?: string | null
+          suggestions?: string[]
+          user_id: string
+          veg_fiber_flag?: string | null
+        }
+        Update: {
+          calcium_flag?: string | null
+          carbs_level?: string | null
+          created_at?: string
+          fat_level?: string | null
+          good_points?: string[]
+          id?: string
+          image_path?: string
+          improve_points?: string[]
+          meal_name?: string | null
+          protein_flag?: string | null
+          raw_ai?: Json | null
+          score?: number | null
+          sugar_flag?: string | null
+          suggestions?: string[]
+          user_id?: string
+          veg_fiber_flag?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          allergies: string | null
+          created_at: string
+          credits_balance: number
+          diet_type: string | null
+          disliked_foods: string | null
+          email: string | null
+          goal: string | null
+          household_size: string | null
+          id: string
+          important_note: string | null
+          onboarding_completed: boolean
+          recipe_preference: string | null
+          updated_at: string
+        }
+        Insert: {
+          allergies?: string | null
+          created_at?: string
+          credits_balance?: number
+          diet_type?: string | null
+          disliked_foods?: string | null
+          email?: string | null
+          goal?: string | null
+          household_size?: string | null
+          id: string
+          important_note?: string | null
+          onboarding_completed?: boolean
+          recipe_preference?: string | null
+          updated_at?: string
+        }
+        Update: {
+          allergies?: string | null
+          created_at?: string
+          credits_balance?: number
+          diet_type?: string | null
+          disliked_foods?: string | null
+          email?: string | null
+          goal?: string | null
+          household_size?: string | null
+          id?: string
+          important_note?: string | null
+          onboarding_completed?: boolean
+          recipe_preference?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      recipe_scans: {
+        Row: {
+          adapted: Json | null
+          created_at: string
+          extracted: Json | null
+          fit_score: number | null
+          good_points: string[]
+          id: string
+          image_path: string | null
+          improve_points: string[]
+          summary: string | null
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          adapted?: Json | null
+          created_at?: string
+          extracted?: Json | null
+          fit_score?: number | null
+          good_points?: string[]
+          id?: string
+          image_path?: string | null
+          improve_points?: string[]
+          summary?: string | null
+          title?: string | null
+          user_id: string
+        }
+        Update: {
+          adapted?: Json | null
+          created_at?: string
+          extracted?: Json | null
+          fit_score?: number | null
+          good_points?: string[]
+          id?: string
+          image_path?: string | null
+          improve_points?: string[]
+          summary?: string | null
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          id: string
+          plan: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          plan?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          plan?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      spend_credits: {
+        Args: { p_cost: number; p_reason: string; p_related_id?: string }
+        Returns: number
+      }
+      refund_credits: {
+        Args: { p_amount: number; p_reason: string; p_related_id?: string }
+        Returns: number
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals["public"]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never

@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+:root {
+  /* Warm, natural, sophisticated palette — deliberately not pink/gradient/gamified */
+  --background: #faf6f0;
+  --foreground: #2b2420;
+
+  --card: #fffdfa;
+  --card-foreground: #2b2420;
+
+  --primary: #a85a3f; /* clay / terracotta */
+  --primary-hover: #92492f;
+  --primary-foreground: #fff8f2;
+
+  --secondary: #6f7d5c; /* sage */
+  --secondary-hover: #5c684b;
+  --secondary-foreground: #fbfbf6;
+
+  --accent: #b3863f; /* soft ochre */
+  --accent-foreground: #2b2420;
+
+  --muted: #f1e8db;
+  --muted-foreground: #6b6156;
+
+  --border: #e6d9c6;
+  --input: #e6d9c6;
+  --ring: #a85a3f;
+
+  --destructive: #a24632;
+  --destructive-foreground: #fff8f2;
+
+  --success: #6f7d5c;
+  --warning: #b3863f;
+
+  --radius: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #211c18;
+    --foreground: #f3ece2;
+
+    --card: #2a241f;
+    --card-foreground: #f3ece2;
+
+    --primary: #d08662;
+    --primary-hover: #dd9a78;
+    --primary-foreground: #2b1a12;
+
+    --secondary: #9caa87;
+    --secondary-hover: #aebb9b;
+    --secondary-foreground: #1c2116;
+
+    --accent: #d3a45c;
+    --accent-foreground: #241a0a;
+
+    --muted: #33291f;
+    --muted-foreground: #c9bcac;
+
+    --border: #45392c;
+    --input: #45392c;
+    --ring: #d08662;
+
+    --destructive: #d98668;
+    --destructive-foreground: #2b1108;
+
+    --success: #9caa87;
+    --warning: #d3a45c;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --font-heading: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+
+  --radius-sm: calc(var(--radius) - 0.5rem);
+  --radius-md: calc(var(--radius) - 0.25rem);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 0.5rem);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 16.5px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading), Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+/* Comfortable tap targets everywhere for a non-tech-savvy, mobile-first audience */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
