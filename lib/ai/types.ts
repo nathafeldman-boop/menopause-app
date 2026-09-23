@@ -19,6 +19,8 @@ export type MealAnalysisResult = {
 export type RecipeScanResult = {
   title: string;
   summary: string;
+  servings: string; // ex: "4 personnes", "" si indéterminé
+  time: string; // ex: "45 min", "" si indéterminé
   ingredients: string[];
   steps: string[];
   goodPoints: string[];
@@ -26,9 +28,15 @@ export type RecipeScanResult = {
   fitScore: number; // 0-100, adéquation avec le profil
 };
 
+export type AdaptedIngredient = {
+  text: string; // ex: "4 courgettes"
+  note: string; // ex: "au lieu de 3" — chaîne vide si rien n'a changé
+  isNew: boolean; // ingrédient ajouté qui n'était pas dans la recette originale
+};
+
 export type AdaptedRecipe = {
   title: string;
-  ingredients: string[];
+  ingredients: AdaptedIngredient[];
   steps: string[];
   whatChanged: string[];
 };

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ImageIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ScoreGauge } from "@/components/meal/score-gauge";
@@ -8,12 +9,16 @@ export function Hero() {
     <section className="mx-auto max-w-5xl px-5 pb-16 pt-10 sm:pt-16">
       <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <div className="flex flex-col gap-6">
+          <span className="w-fit rounded-full border border-border bg-card px-3.5 py-1.5 text-sm text-muted-foreground">
+            Coach alimentaire · Ménopause
+          </span>
           <h1 className="font-heading text-4xl font-medium leading-[1.1] sm:text-5xl">
-            Bien manger pendant la ménopause, sans régime compliqué.
+            Bien manger pendant la ménopause,{" "}
+            <em className="text-primary italic">sans régime compliqué.</em>
           </h1>
           <p className="text-lg leading-relaxed text-muted-foreground">
-            Photographiez votre repas, votre recette ou les ingrédients de votre frigo. Votre
-            coach vous aide à comprendre quoi améliorer et quoi préparer.
+            Photographiez votre assiette. Alma vous dit ce qui est déjà bien et ce que vous
+            pourriez ajouter, simplement.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg">
@@ -21,32 +26,27 @@ export function Hero() {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Web app accessible directement depuis votre navigateur, sur mobile comme sur
-            ordinateur. Ne remplace pas l&apos;avis d&apos;un professionnel de santé.
+            Dans votre navigateur, sans téléchargement.
+            <br />
+            Ne remplace pas l&apos;avis d&apos;un professionnel de santé.
           </p>
         </div>
 
         <div className="relative">
-          <div className="mx-auto w-full max-w-sm rounded-3xl border border-border bg-card p-6 shadow-[0_20px_50px_-20px_rgba(43,36,32,0.25)]">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="h-12 w-12 shrink-0 rounded-xl bg-muted" />
+          <div className="mx-auto w-full max-w-sm">
+            <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-border bg-muted/50 text-muted-foreground">
+              <ImageIcon className="h-7 w-7" strokeWidth={1.5} />
+              <span className="text-sm">Photo : une assiette colorée</span>
+            </div>
+
+            <div className="-mt-10 ml-6 flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-[0_20px_50px_-20px_rgba(43,36,32,0.3)] sm:mr-6">
+              <ScoreGauge score={82} />
               <div>
-                <p className="text-xs text-muted-foreground">Votre repas</p>
-                <p className="font-heading font-medium leading-tight">
-                  Poêlée de légumes, poulet &amp; riz complet
+                <p className="font-heading font-medium leading-tight">Bel équilibre</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  Ajoutez un yaourt ou quelques amandes pour le calcium.
                 </p>
               </div>
-            </div>
-            <ScoreGauge score={82} />
-            <div className="mt-5 flex flex-col gap-2 text-sm">
-              <p className="flex gap-2">
-                <span className="text-secondary">●</span>
-                Bonne source de protéines et de légumes
-              </p>
-              <p className="flex gap-2">
-                <span className="text-accent">●</span>
-                Ajoutez une source de calcium pour équilibrer
-              </p>
             </div>
           </div>
         </div>

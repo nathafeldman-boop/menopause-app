@@ -52,7 +52,12 @@ export async function POST(request: Request) {
         good_points: result.goodPoints,
         improve_points: result.improvePoints,
         fit_score: result.fitScore,
-        extracted: { ingredients: result.ingredients, steps: result.steps },
+        extracted: {
+          ingredients: result.ingredients,
+          steps: result.steps,
+          servings: result.servings,
+          time: result.time,
+        },
       })
       .select("id")
       .single();

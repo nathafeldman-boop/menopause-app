@@ -81,7 +81,7 @@ Donne 2 à 4 points déjà positifs, 1 à 3 points à améliorer (formulés sans
   },
 
   async scanRecipePhoto(imageBase64, mimeType) {
-    const prompt = `Cette image montre une recette (photo, capture d'écran ou page de livre). Extrais et comprends la recette : titre, ingrédients, étapes.
+    const prompt = `Cette image montre une recette (photo, capture d'écran ou page de livre). Extrais et comprends la recette : titre, nombre de personnes, temps de préparation, ingrédients, étapes. Si le nombre de personnes ou le temps n'est pas indiqué, laisse une chaîne vide plutôt que de deviner.
 
 Donne aussi un résumé en 1-2 phrases, 2-3 points positifs, 1-3 points à améliorer d'un point de vue nutritionnel général, et un score d'adéquation (0-100) avec une alimentation équilibrée adaptée à une femme en péri/ménopause (sans jugement, reste bienveillant).`;
 
@@ -100,7 +100,9 @@ Ingrédients : ${recipe.ingredients.join(", ")}
 
 ${profileContextBlock(profile)}
 
-Adapte cette recette pour mieux correspondre au profil et aux objectifs de l'utilisatrice (ex : plus de fibres, une source de calcium, moins de sucre ajouté, respect des allergies/aversions listées), sans dénaturer le plat. Donne la version adaptée complète (titre, ingrédients, étapes) et une liste courte de ce qui a changé et pourquoi.`;
+Adapte cette recette pour mieux correspondre au profil et aux objectifs de l'utilisatrice (ex : plus de fibres, une source de calcium, moins de sucre ajouté, respect des allergies/aversions listées), sans dénaturer le plat.
+
+Donne la version adaptée complète : titre, étapes, et surtout la liste COMPLÈTE des ingrédients de la version adaptée (y compris ceux qui n'ont pas changé), où pour chaque ingrédient modifié tu précises dans "note" ce qui a changé par rapport à l'original (ex: "au lieu de 3"), et où chaque ingrédient totalement nouveau a isNew à true. Les ingrédients inchangés ont note à "" et isNew à false. Ajoute aussi une liste courte ("whatChanged") résumant les changements et pourquoi.`;
 
     return generateJson<AdaptedRecipe>({ prompt, schema: adaptedRecipeSchema });
   },

@@ -46,20 +46,37 @@ export const recipeScanSchema = {
   properties: {
     title: { type: "string" },
     summary: { type: "string", description: "Résumé en 1-2 phrases" },
+    servings: { type: "string", description: "Ex: '4 personnes', chaîne vide si indéterminé" },
+    time: { type: "string", description: "Ex: '45 min', chaîne vide si indéterminé" },
     ingredients: { type: "array", items: { type: "string" } },
     steps: { type: "array", items: { type: "string" } },
     goodPoints: { type: "array", items: { type: "string" } },
     improvePoints: { type: "array", items: { type: "string" } },
     fitScore: { type: "integer", minimum: 0, maximum: 100, description: "Adéquation avec le profil utilisatrice" },
   },
-  required: ["title", "summary", "ingredients", "steps", "goodPoints", "improvePoints", "fitScore"],
+  required: ["title", "summary", "servings", "time", "ingredients", "steps", "goodPoints", "improvePoints", "fitScore"],
 };
 
 export const adaptedRecipeSchema = {
   type: "object",
   properties: {
     title: { type: "string" },
-    ingredients: { type: "array", items: { type: "string" } },
+    ingredients: {
+      type: "array",
+      description: "Liste complète des ingrédients de la version adaptée",
+      items: {
+        type: "object",
+        properties: {
+          text: { type: "string", description: "Ex: '4 courgettes', '250 g de ricotta'" },
+          note: {
+            type: "string",
+            description: "Précision sur ce qui a changé pour cet ingrédient, ex: 'au lieu de 3'. Chaîne vide si rien n'a changé.",
+          },
+          isNew: { type: "boolean", description: "true si cet ingrédient n'existait pas dans la recette originale" },
+        },
+        required: ["text", "note", "isNew"],
+      },
+    },
     steps: { type: "array", items: { type: "string" } },
     whatChanged: { type: "array", items: { type: "string" }, description: "Liste courte de ce qui a été adapté et pourquoi" },
   },

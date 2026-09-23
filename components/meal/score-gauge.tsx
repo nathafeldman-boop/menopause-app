@@ -1,18 +1,47 @@
-import { Progress } from "@/components/ui/progress";
+import { getScoreColorVar } from "@/lib/score";
 
-export function ScoreGauge({ score, label = "Équilibre général" }: { score: number; label?: string }) {
-  const colorClass = score >= 70 ? "bg-secondary" : score >= 40 ? "bg-accent" : "bg-primary";
+export function ScoreGauge({ score, size = 76 }: { score: number; size?: number }) {
+  const clamped = Math.max(0, Math.min(100, score));
+  const strokeWidth = Math.round(size * 0.11);
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference * (1 - clamped / 100);
+  const color = getScoreColorVar(clamped);
+  const center = size / 2;
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-baseline justify-between">
-        <span className="text-sm font-medium text-muted-foreground">{label}</span>
-        <span className="font-heading text-3xl font-medium">
-          {score}
-          <span className="text-base font-normal text-muted-foreground">/100</span>
-        </span>
+    <div
+      className="relative shrink-0"
+      style={{ width: size, height: size }}
+      role="img"
+      aria-label={`Score : ${clamped} sur 100`}
+    >
+      <svg width={size} height={size} className="-rotate-90">
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke="var(--muted)"
+          strokeWidth={strokeWidth}
+        />
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          style={{ transition: "stroke-dashoffset 0.5s ease" }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="font-heading text-xl font-medium leading-none">{clamped}</span>
+        <span className="text-[10px] leading-none text-muted-foreground">/100</span>
       </div>
-      <Progress value={score} indicatorClassName={colorClass} />
     </div>
   );
 }

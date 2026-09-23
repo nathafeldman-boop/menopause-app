@@ -37,10 +37,10 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #211c18;
+    --background: #221b19;
     --foreground: #f3ece2;
 
-    --card: #2a241f;
+    --card: #2c2321;
     --card-foreground: #f3ece2;
 
     --primary: #d08662;
@@ -54,11 +54,11 @@
     --accent: #d3a45c;
     --accent-foreground: #241a0a;
 
-    --muted: #33291f;
-    --muted-foreground: #c9bcac;
+    --muted: #362926;
+    --muted-foreground: #cbb9b2;
 
-    --border: #45392c;
-    --input: #45392c;
+    --border: #493835;
+    --input: #493835;
     --ring: #d08662;
 
     --destructive: #d98668;
@@ -105,7 +105,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 16.5px;
+  font-size: 17px;
 }
 
 h1,

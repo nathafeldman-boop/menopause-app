@@ -38,10 +38,17 @@ export async function POST(request: Request) {
   }
 
   try {
-    const extracted = (recipe.extracted ?? {}) as { ingredients?: string[]; steps?: string[] };
+    const extracted = (recipe.extracted ?? {}) as {
+      ingredients?: string[];
+      steps?: string[];
+      servings?: string;
+      time?: string;
+    };
     const recipeForAi: RecipeScanResult = {
       title: recipe.title ?? "Recette",
       summary: recipe.summary ?? "",
+      servings: extracted.servings ?? "",
+      time: extracted.time ?? "",
       ingredients: extracted.ingredients ?? [],
       steps: extracted.steps ?? [],
       goodPoints: recipe.good_points,

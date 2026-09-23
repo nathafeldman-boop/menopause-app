@@ -53,6 +53,8 @@ export const mockProvider: AiProvider = {
       title: "Recette repérée sur votre photo",
       summary:
         "Une recette qui semble équilibrée, avec une base de protéines et de légumes à confirmer visuellement.",
+      servings: "4 personnes",
+      time: "35 min",
       ingredients: [
         "200 g de protéine au choix (poulet, poisson, légumineuses)",
         "2 poignées de légumes de saison",
@@ -77,8 +79,8 @@ export const mockProvider: AiProvider = {
     return {
       title: `${recipe.title} — version adaptée`,
       ingredients: [
-        ...recipe.ingredients,
-        "1 poignée d'amandes ou de graines de sésame (source de calcium)",
+        ...recipe.ingredients.map((text) => ({ text, note: "", isNew: false })),
+        { text: "1 poignée d'amandes effilées (source de calcium)", note: "", isNew: true },
       ],
       steps: [...recipe.steps, "Parsemer d'amandes concassées ou de graines avant de servir."],
       whatChanged: [

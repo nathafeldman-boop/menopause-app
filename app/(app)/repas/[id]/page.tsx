@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ArrowLeft, Check } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { ScoreGauge } from "@/components/meal/score-gauge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FLAG_LABELS, LEVEL_LABELS } from "@/lib/meal-labels";
+import { FLAG_LABELS, LEVEL_LABELS, getMealTimeLabel, formatMealTime } from "@/lib/meal-labels";
+import { getScoreLabel, getScoreSummary } from "@/lib/score";
 
 export const metadata: Metadata = { title: "Analyse de votre repas" };
 
@@ -21,8 +24,50 @@ export default async function MealResultPage({ params }: { params: Promise<{ id:
     .from("photos")
     .createSignedUrl(meal.image_path, 3600);
 
+  const score = meal.score ?? 0;
+
+  const chips: Array<{ label: string; value: string; tone: "good" | "warn" | "neutral" }> = [
+    {
+      label: "Protéines",
+      value: FLAG_LABELS[meal.protein_flag ?? "unclear"],
+      tone: meal.protein_flag === "present" ? "good" : "neutral",
+    },
+    {
+      label: "Végétaux / fibres",
+      value: FLAG_LABELS[meal.veg_fiber_flag ?? "unclear"],
+      tone: meal.veg_fiber_flag === "present" ? "good" : "neutral",
+    },
+    {
+      label: "Calcium",
+      value: FLAG_LABELS[meal.calcium_flag ?? "unclear"],
+      tone: meal.calcium_flag === "present" ? "good" : "warn",
+    },
+    {
+      label: "Glucides",
+      value: LEVEL_LABELS[meal.carbs_level ?? "unclear"],
+      tone: "neutral",
+    },
+    {
+      label: "Mat. grasses",
+      value: LEVEL_LABELS[meal.fat_level ?? "unclear"],
+      tone: "neutral",
+    },
+    {
+      label: "Sucres visibles",
+      value: FLAG_LABELS[meal.sugar_flag ?? "unclear"],
+      tone: meal.sugar_flag === "absent" ? "good" : "warn",
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-6">
+      <Link
+        href="/repas"
+        className="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" /> Votre repas
+      </Link>
+
       {signed?.signedUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -33,17 +78,35 @@ export default async function MealResultPage({ params }: { params: Promise<{ id:
       )}
 
       <div>
-        {meal.meal_name && <p className="text-sm text-muted-foreground">{meal.meal_name}</p>}
-        <ScoreGauge score={meal.score ?? 0} />
+        <p className="text-sm text-muted-foreground">
+          {getMealTimeLabel(meal.created_at)} · {formatMealTime(meal.created_at)}
+        </p>
+        {meal.meal_name && (
+          <h1 className="mt-0.5 font-heading text-2xl font-medium">{meal.meal_name}</h1>
+        )}
       </div>
 
-      <div className="grid grid-cols-3 gap-2 text-center text-xs">
-        <InfoChip label="Protéines" value={FLAG_LABELS[meal.protein_flag ?? "unclear"]} />
-        <InfoChip label="Végétaux / fibres" value={FLAG_LABELS[meal.veg_fiber_flag ?? "unclear"]} />
-        <InfoChip label="Calcium" value={FLAG_LABELS[meal.calcium_flag ?? "unclear"]} />
-        <InfoChip label="Glucides" value={LEVEL_LABELS[meal.carbs_level ?? "unclear"]} />
-        <InfoChip label="Mat. grasses" value={LEVEL_LABELS[meal.fat_level ?? "unclear"]} />
-        <InfoChip label="Sucres visibles" value={FLAG_LABELS[meal.sugar_flag ?? "unclear"]} />
+      <Card>
+        <CardContent className="flex items-center gap-4 p-5">
+          <ScoreGauge score={score} />
+          <div>
+            <p className="font-heading text-lg font-medium leading-tight">
+              {getScoreLabel(score)}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{getScoreSummary(score)}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="flex flex-wrap gap-2">
+        {chips.map((chip) => (
+          <Badge
+            key={chip.label}
+            variant={chip.tone === "good" ? "success" : chip.tone === "warn" ? "warning" : "default"}
+          >
+            {chip.label} : {chip.value}
+          </Badge>
+        ))}
       </div>
 
       {meal.good_points.length > 0 && (
@@ -53,7 +116,7 @@ export default async function MealResultPage({ params }: { params: Promise<{ id:
             <ul className="flex flex-col gap-2 text-sm">
               {meal.good_points.map((point, i) => (
                 <li key={i} className="flex gap-2">
-                  <span className="mt-1 text-secondary">●</span>
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
                   <span>{point}</span>
                 </li>
               ))}
@@ -69,7 +132,7 @@ export default async function MealResultPage({ params }: { params: Promise<{ id:
             <ul className="flex flex-col gap-2 text-sm">
               {meal.improve_points.map((point, i) => (
                 <li key={i} className="flex gap-2">
-                  <span className="mt-1 text-accent">●</span>
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                   <span>{point}</span>
                 </li>
               ))}
@@ -79,14 +142,16 @@ export default async function MealResultPage({ params }: { params: Promise<{ id:
       )}
 
       {meal.suggestions.length > 0 && (
-        <Card className="border-primary/30 bg-primary/5">
+        <Card className="border-none bg-muted">
           <CardContent className="p-5">
             <h2 className="mb-3 font-heading text-lg font-medium">Notre suggestion</h2>
-            <ul className="flex flex-col gap-2 text-sm">
+            <ul className="flex flex-col gap-3 text-sm">
               {meal.suggestions.map((point, i) => (
-                <li key={i} className="flex gap-2">
-                  <span className="mt-1 text-primary">→</span>
-                  <span>{point}</span>
+                <li key={i} className="flex gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+                    {i + 1}
+                  </span>
+                  <span className="pt-0.5">{point}</span>
                 </li>
               ))}
             </ul>
@@ -102,15 +167,6 @@ export default async function MealResultPage({ params }: { params: Promise<{ id:
       <Button asChild variant="outline">
         <Link href="/repas/nouveau">Analyser un autre repas</Link>
       </Button>
-    </div>
-  );
-}
-
-function InfoChip({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-border bg-card p-2">
-      <p className="text-muted-foreground">{label}</p>
-      <p className="mt-0.5 font-medium text-foreground">{value}</p>
     </div>
   );
 }
