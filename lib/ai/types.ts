@@ -2,7 +2,8 @@ export type Flag = "present" | "absent" | "unclear";
 export type Level = "low" | "moderate" | "high" | "unclear";
 
 export type MealAnalysisResult = {
-  score: number; // 0-100, équilibre général
+  mealDetected: boolean; // false si la photo ne montre pas clairement un repas/aliment
+  score: number; // 0-100, équilibre général — n'a de sens que si mealDetected est true
   mealName: string;
   proteinFlag: Flag;
   vegFiberFlag: Flag;

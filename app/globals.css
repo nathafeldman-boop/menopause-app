@@ -1,29 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  /* Warm, natural, sophisticated palette — deliberately not pink/gradient/gamified */
-  --background: #faf6f0;
+  /* Chaleureux, simple, rassurant — fond rose poudré, jamais criard */
+  --background: #faf1ee;
   --foreground: #2b2420;
 
-  --card: #fffdfa;
+  --card: #fffbfa;
   --card-foreground: #2b2420;
 
   --primary: #a85a3f; /* clay / terracotta */
   --primary-hover: #92492f;
   --primary-foreground: #fff8f2;
 
-  --secondary: #6f7d5c; /* sage */
+  --secondary: #6f7d5c; /* sage — score ≥70 */
   --secondary-hover: #5c684b;
   --secondary-foreground: #fbfbf6;
 
-  --accent: #b3863f; /* soft ochre */
+  --accent: #b3863f; /* ocre — score 40-69 */
   --accent-foreground: #2b2420;
 
-  --muted: #f1e8db;
-  --muted-foreground: #6b6156;
+  --muted: #f4e6e1;
+  --muted-foreground: #6b5e58;
 
-  --border: #e6d9c6;
-  --input: #e6d9c6;
+  --border: #ecd9d2;
+  --input: #ecd9d2;
   --ring: #a85a3f;
 
   --destructive: #a24632;

@@ -3,7 +3,17 @@
 export const mealAnalysisSchema = {
   type: "object",
   properties: {
-    score: { type: "integer", minimum: 0, maximum: 100, description: "Équilibre général du repas" },
+    mealDetected: {
+      type: "boolean",
+      description:
+        "false si la photo ne montre PAS clairement un repas ou un aliment (table vide, objet, photo floue, personne, etc.)",
+    },
+    score: {
+      type: "integer",
+      minimum: 0,
+      maximum: 100,
+      description: "Équilibre général du repas. Si mealDetected est false, mettre 0.",
+    },
     mealName: { type: "string", description: "Nom court du plat, ou chaîne vide si indéterminé" },
     proteinFlag: { type: "string", enum: ["present", "absent", "unclear"] },
     vegFiberFlag: { type: "string", enum: ["present", "absent", "unclear"] },
@@ -16,6 +26,7 @@ export const mealAnalysisSchema = {
     suggestions: { type: "array", items: { type: "string" }, description: "2 à 3 suggestions très concrètes" },
   },
   required: [
+    "mealDetected",
     "score",
     "mealName",
     "proteinFlag",

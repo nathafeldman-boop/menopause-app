@@ -31,6 +31,15 @@ export async function POST(request: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const mimeType = file.type || "image/jpeg";
+    const base64 = buffer.toString("base64");
+
+    const profile = await getProfile(supabase, user.id);
+    const analysis = await ai.analyzeMealPhoto(base64, mimeType, toAiContext(profile));
+
+    if (!analysis.mealDetected) {
+      return NextResponse.json({ error: "no_meal_detected" }, { status: 422 });
+    }
+
     const ext = mimeType.split("/")[1] || "jpg";
     const path = `${user.id}/meals/${randomUUID()}.${ext}`;
 
@@ -39,10 +48,6 @@ export async function POST(request: Request) {
       upsert: false,
     });
     if (uploadError) throw uploadError;
-
-    const profile = await getProfile(supabase, user.id);
-    const base64 = buffer.toString("base64");
-    const analysis = await ai.analyzeMealPhoto(base64, mimeType, toAiContext(profile));
 
     const { data: row, error: insertError } = await supabase
       .from("meal_analyses")

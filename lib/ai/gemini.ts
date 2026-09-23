@@ -55,7 +55,15 @@ async function generateJson<T>(params: {
 
 export const geminiProvider: AiProvider = {
   async analyzeMealPhoto(imageBase64, mimeType, profile) {
-    const prompt = `Voici une photo de repas. Regarde-la attentivement avant de répondre.
+    const prompt = `Voici une photo envoyée par une utilisatrice qui pense y avoir photographié son repas.
+
+ÉTAPE 1 — OBLIGATOIRE, à faire avant tout le reste : détermine si cette photo montre réellement un repas ou des aliments, avec certitude.
+Mets mealDetected à false si la photo montre : une table ou un plan de travail vide ou quasiment vide, de la vaisselle vide ou déjà terminée, un objet non alimentaire, une personne, un lieu, une image floue/illisible, ou tout ce qui n'est pas clairement de la nourriture.
+Mets mealDetected à true UNIQUEMENT si tu peux identifier avec certitude au moins un aliment ou plat sur la photo.
+
+Si mealDetected est false : mets score à 0, mealName à "", tous les flags à "unclear", goodPoints et suggestions à des tableaux vides, et improvePoints à un seul message clair du type : "Nous n'avons pas identifié de repas sur cette photo. Réessayez avec une photo de votre assiette." Ne poursuis pas avec une analyse nutritionnelle inventée.
+
+Si mealDetected est true, poursuis normalement :
 
 Règle la plus importante : décris UNIQUEMENT les aliments clairement identifiables sur cette photo précise. N'invente ou ne suppose jamais la présence d'un aliment que tu ne vois pas (ex : ne mentionne pas "trop de viande" si aucune viande n'est visible, ne dis pas "manque de légumes" si l'assiette est déjà majoritairement composée de légumes). Si l'assiette est composée à 90% d'un seul type d'aliment (ex : uniquement des légumes), tes retours doivent refléter cette réalité, pas un repas "standard" générique.
 

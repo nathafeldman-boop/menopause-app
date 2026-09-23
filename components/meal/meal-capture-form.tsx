@@ -30,6 +30,10 @@ export function MealCaptureForm() {
       if (!res.ok) {
         if (data.error === "subscription_required") {
           setSubscriptionRequired(true);
+        } else if (data.error === "no_meal_detected") {
+          setError(
+            "Nous n'avons pas identifié de repas sur cette photo. Réessayez avec une photo de votre assiette, bien éclairée et cadrée de près."
+          );
         } else {
           setError("Une erreur est survenue pendant l'analyse. Merci de réessayer.");
         }

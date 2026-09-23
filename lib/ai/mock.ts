@@ -22,6 +22,7 @@ export const mockProvider: AiProvider = {
     const score = 60 + (seed % 31); // 60-90, mode démo optimiste et bienveillant
 
     return {
+      mealDetected: true,
       score,
       mealName: pick(["Assiette repérée", "Repas composé", "Votre plat"], seed),
       proteinFlag: pick(["present", "present", "unclear"], seed),
