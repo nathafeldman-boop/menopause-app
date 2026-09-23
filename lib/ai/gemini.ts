@@ -28,12 +28,13 @@ async function generateJson<T>(params: {
   schema: object;
   image?: { data: string; mimeType: string };
 }): Promise<T> {
-  const parts: Array<{ text: string } | { inlineData: { data: string; mimeType: string } }> = [
-    { text: params.prompt },
-  ];
+  // L'image en premier, puis le texte : améliore l'ancrage visuel du modèle
+  // et réduit le risque qu'il décrive des aliments absents de la photo.
+  const parts: Array<{ text: string } | { inlineData: { data: string; mimeType: string } }> = [];
   if (params.image) {
     parts.push({ inlineData: { data: params.image.data, mimeType: params.image.mimeType } });
   }
+  parts.push({ text: params.prompt });
 
   const response = await client().models.generateContent({
     model: MODEL,
@@ -42,6 +43,8 @@ async function generateJson<T>(params: {
       systemInstruction: SAFETY_GUARDRAILS,
       responseMimeType: "application/json",
       responseJsonSchema: params.schema,
+      // Basse température : on veut une lecture fidèle de l'image, pas de créativité.
+      temperature: 0.2,
     },
   });
 
@@ -52,13 +55,15 @@ async function generateJson<T>(params: {
 
 export const geminiProvider: AiProvider = {
   async analyzeMealPhoto(imageBase64, mimeType, profile) {
-    const prompt = `Analyse visuellement la photo de repas fournie, dans le cadre d'un coaching alimentaire prudent (pas de diagnostic médical, pas de chiffres inventés).
+    const prompt = `Voici une photo de repas. Regarde-la attentivement avant de répondre.
+
+Règle la plus importante : décris UNIQUEMENT les aliments clairement identifiables sur cette photo précise. N'invente ou ne suppose jamais la présence d'un aliment que tu ne vois pas (ex : ne mentionne pas "trop de viande" si aucune viande n'est visible, ne dis pas "manque de légumes" si l'assiette est déjà majoritairement composée de légumes). Si l'assiette est composée à 90% d'un seul type d'aliment (ex : uniquement des légumes), tes retours doivent refléter cette réalité, pas un repas "standard" générique.
 
 ${profileContextBlock(profile)}
 
-Évalue : équilibre général (score 0-100), présence de protéines, présence de végétaux/fibres, sources potentielles de calcium, niveau de glucides, niveau de matières grasses, présence d'aliments très sucrés si visibles. Si un élément n'est pas déterminable visuellement, indique "unclear".
+Évalue, en te basant strictement sur ce qui est visible : équilibre général (score 0-100), présence de protéines, présence de végétaux/fibres, sources potentielles de calcium, niveau de glucides, niveau de matières grasses, présence d'aliments très sucrés si visibles. Si un élément n'est pas déterminable visuellement, indique "unclear" plutôt que de deviner.
 
-Donne 2 à 4 points déjà positifs, 1 à 3 points à améliorer (formulés sans culpabiliser), et 2 à 3 suggestions très concrètes et réalisables.`;
+Donne 2 à 4 points déjà positifs, 1 à 3 points à améliorer (formulés sans culpabiliser), et 2 à 3 suggestions très concrètes et réalisables — tous cohérents avec ce qui est réellement visible sur la photo.`;
 
     return generateJson<MealAnalysisResult>({
       prompt,
