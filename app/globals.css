@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  /* Chaleureux, simple, rassurant — fond rose poudré, jamais criard */
-  --background: #faf1ee;
+  /* Chaleureux, simple, rassurant — rose très pâle, jamais criard.
+     Thème forcé en clair (pas de media query dark) : l'app garde son identité
+     rose quel que soit le réglage système du téléphone. */
+  --background: #fdf1f4;
   --foreground: #2b2420;
 
-  --card: #fffbfa;
+  --card: #fffafb;
   --card-foreground: #2b2420;
 
   --primary: #a85a3f; /* clay / terracotta */
@@ -19,11 +21,11 @@
   --accent: #b3863f; /* ocre — score 40-69 */
   --accent-foreground: #2b2420;
 
-  --muted: #f4e6e1;
+  --muted: #fbe4ea;
   --muted-foreground: #6b5e58;
 
-  --border: #ecd9d2;
-  --input: #ecd9d2;
+  --border: #f5d7df;
+  --input: #f5d7df;
   --ring: #a85a3f;
 
   --destructive: #a24632;
@@ -33,40 +35,8 @@
   --warning: #b3863f;
 
   --radius: 1rem;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #221b19;
-    --foreground: #f3ece2;
-
-    --card: #2c2321;
-    --card-foreground: #f3ece2;
-
-    --primary: #d08662;
-    --primary-hover: #dd9a78;
-    --primary-foreground: #2b1a12;
-
-    --secondary: #9caa87;
-    --secondary-hover: #aebb9b;
-    --secondary-foreground: #1c2116;
-
-    --accent: #d3a45c;
-    --accent-foreground: #241a0a;
-
-    --muted: #362926;
-    --muted-foreground: #cbb9b2;
-
-    --border: #493835;
-    --input: #493835;
-    --ring: #d08662;
-
-    --destructive: #d98668;
-    --destructive-foreground: #2b1108;
-
-    --success: #9caa87;
-    --warning: #d3a45c;
-  }
+  color-scheme: light;
 }
 
 @theme inline {

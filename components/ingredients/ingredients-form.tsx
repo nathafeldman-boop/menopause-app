@@ -9,16 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PhotoPicker } from "@/components/photo/photo-picker";
-import { SubscriptionRequiredBanner } from "@/components/billing/subscription-required-banner";
 
-export function IngredientsForm() {
+export function IngredientsForm({ subscribed }: { subscribed: boolean }) {
   const router = useRouter();
   const [chips, setChips] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [photo, setPhoto] = useState<Blob | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [subscriptionRequired, setSubscriptionRequired] = useState(false);
 
   function commitChipsFromInput() {
     const parts = inputValue
@@ -58,7 +56,6 @@ export function IngredientsForm() {
 
     setIsSubmitting(true);
     setError(null);
-    setSubscriptionRequired(false);
 
     const formData = new FormData();
     if (finalChips.length > 0) formData.append("ingredients", JSON.stringify(finalChips));
@@ -69,8 +66,10 @@ export function IngredientsForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        if (data.error === "subscription_required") {
-          setSubscriptionRequired(true);
+        if (data.error === "no_ingredients_detected") {
+          setError(
+            "Nous n'avons pas identifié d'ingrédients sur cette photo. Réessayez avec une photo nette de vos aliments."
+          );
         } else {
           setError(data.error || "Une erreur est survenue. Merci de réessayer.");
         }
@@ -130,11 +129,14 @@ export function IngredientsForm() {
         </TabsContent>
       </Tabs>
 
-      {subscriptionRequired && <SubscriptionRequiredBanner />}
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       <Button size="lg" onClick={handleSubmit} disabled={isSubmitting}>
-        {isSubmitting ? "Recherche de recettes…" : "Trouver 3 recettes"}
+        {isSubmitting
+          ? "Recherche de recettes…"
+          : subscribed
+            ? "Trouver 3 recettes"
+            : "Trouver une recette"}
       </Button>
     </div>
   );

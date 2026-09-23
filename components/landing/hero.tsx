@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ImageIcon } from "lucide-react";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { ScoreGauge } from "@/components/meal/score-gauge";
@@ -34,9 +34,15 @@ export function Hero() {
 
         <div className="relative">
           <div className="mx-auto w-full max-w-sm">
-            <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-border bg-muted/50 text-muted-foreground">
-              <ImageIcon className="h-7 w-7" strokeWidth={1.5} />
-              <span className="text-sm">Photo : une assiette colorée</span>
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-border">
+              <Image
+                src="/images/healthy-bowl.jpg"
+                alt="Assiette colorée et équilibrée : saumon, quinoa, avocat et légumes"
+                fill
+                priority
+                sizes="(min-width: 1024px) 24rem, 90vw"
+                className="object-cover"
+              />
             </div>
 
             <div className="-mt-10 ml-6 flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-[0_20px_50px_-20px_rgba(43,36,32,0.3)] sm:mr-6">

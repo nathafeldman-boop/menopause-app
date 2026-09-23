@@ -5,7 +5,6 @@ import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveSubscription } from "@/lib/subscription";
 import { RecipeCaptureForm } from "@/components/recipe/recipe-capture-form";
-import { PaywallPrompt } from "@/components/billing/paywall-prompt";
 
 export const metadata: Metadata = { title: "Scanner une recette" };
 
@@ -29,8 +28,13 @@ export default async function RecipeScannerPage() {
         <p className="mt-1 text-muted-foreground">
           Photo, capture d&apos;écran ou page de livre : nous lisons la recette pour vous.
         </p>
+        {!subscribed && (
+          <p className="mt-1 text-sm text-muted-foreground">
+            Sans abonnement, vous recevez un aperçu de la recette.
+          </p>
+        )}
       </div>
-      {subscribed ? <RecipeCaptureForm /> : <PaywallPrompt />}
+      <RecipeCaptureForm />
     </div>
   );
 }

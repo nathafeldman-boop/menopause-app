@@ -5,7 +5,6 @@ import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveSubscription } from "@/lib/subscription";
 import { IngredientsForm } from "@/components/ingredients/ingredients-form";
-import { PaywallPrompt } from "@/components/billing/paywall-prompt";
 
 export const metadata: Metadata = { title: "Recettes avec mes ingrédients" };
 
@@ -27,10 +26,11 @@ export default async function IngredientsPage() {
       <div>
         <h1 className="font-heading text-2xl font-medium">Que puis-je cuisiner ?</h1>
         <p className="mt-1 text-muted-foreground">
-          Listez ou photographiez ce que vous avez, nous vous proposons 3 recettes adaptées.
+          Listez ou photographiez ce que vous avez, nous vous proposons{" "}
+          {subscribed ? "3 recettes adaptées" : "une recette adaptée"}.
         </p>
       </div>
-      {subscribed ? <IngredientsForm /> : <PaywallPrompt />}
+      <IngredientsForm subscribed={subscribed} />
     </div>
   );
 }

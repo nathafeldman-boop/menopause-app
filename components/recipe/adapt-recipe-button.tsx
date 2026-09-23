@@ -28,6 +28,10 @@ export function AdaptRecipeButton({ recipeId }: { recipeId: string }) {
       if (!res.ok) {
         if (data.error === "subscription_required") {
           setSubscriptionRequired(true);
+        } else if (data.error === "rescan_required") {
+          setError(
+            "Cette recette n'a été qu'aperçue, pas scannée en entier. Scannez-la à nouveau pour l'adapter."
+          );
         } else {
           setError("Une erreur est survenue. Merci de réessayer.");
         }

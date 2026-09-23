@@ -5,20 +5,17 @@ import { useRouter } from "next/navigation";
 
 import { PhotoPicker } from "@/components/photo/photo-picker";
 import { Button } from "@/components/ui/button";
-import { SubscriptionRequiredBanner } from "@/components/billing/subscription-required-banner";
 
 export function RecipeCaptureForm() {
   const router = useRouter();
   const [file, setFile] = useState<Blob | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [subscriptionRequired, setSubscriptionRequired] = useState(false);
 
   async function handleSubmit() {
     if (!file) return;
     setIsSubmitting(true);
     setError(null);
-    setSubscriptionRequired(false);
 
     const formData = new FormData();
     formData.append("photo", file, "recette.jpg");
@@ -28,8 +25,10 @@ export function RecipeCaptureForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        if (data.error === "subscription_required") {
-          setSubscriptionRequired(true);
+        if (data.error === "no_recipe_detected") {
+          setError(
+            "Nous n'avons pas identifié de recette sur cette photo. Réessayez avec une photo nette du titre, des ingrédients ou des étapes."
+          );
         } else {
           setError("Une erreur est survenue pendant la lecture de la recette. Merci de réessayer.");
         }
@@ -52,7 +51,6 @@ export function RecipeCaptureForm() {
         onReady={(blob) => setFile(blob)}
       />
 
-      {subscriptionRequired && <SubscriptionRequiredBanner />}
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       <Button size="lg" onClick={handleSubmit} disabled={!file || isSubmitting}>

@@ -4,6 +4,7 @@ import type {
   RecipeScanResult,
   AdaptedRecipe,
   GeneratedRecipe,
+  GeneratedRecipesResult,
 } from "./types";
 
 async function fakeDelay() {
@@ -47,29 +48,37 @@ export const mockProvider: AiProvider = {
     } satisfies MealAnalysisResult;
   },
 
-  async scanRecipePhoto() {
+  async scanRecipePhoto(_imageBase64, _mimeType, teaser) {
     await fakeDelay();
+    const ingredients = [
+      "200 g de protéine au choix (poulet, poisson, légumineuses)",
+      "2 poignées de légumes de saison",
+      "1 portion de féculents (riz, quinoa ou pommes de terre)",
+      "1 filet d'huile d'olive",
+      "Sel, poivre, herbes fraîches",
+    ];
     return {
+      recipeDetected: true,
       title: "Recette repérée sur votre photo",
       summary:
         "Une recette qui semble équilibrée, avec une base de protéines et de légumes à confirmer visuellement.",
       servings: "4 personnes",
       time: "35 min",
-      ingredients: [
-        "200 g de protéine au choix (poulet, poisson, légumineuses)",
-        "2 poignées de légumes de saison",
-        "1 portion de féculents (riz, quinoa ou pommes de terre)",
-        "1 filet d'huile d'olive",
-        "Sel, poivre, herbes fraîches",
-      ],
-      steps: [
-        "Préparer et couper les légumes.",
-        "Cuire la source de protéines à feu moyen.",
-        "Ajouter les légumes et laisser mijoter quelques minutes.",
-        "Servir avec les féculents et assaisonner.",
-      ],
-      goodPoints: ["Bon équilibre protéines / légumes / féculents.", "Recette simple à préparer."],
-      improvePoints: ["Une source de calcium pourrait être ajoutée (ex : un peu de fromage râpé)."],
+      ingredients: teaser ? ingredients.slice(0, 2) : ingredients,
+      steps: teaser
+        ? []
+        : [
+            "Préparer et couper les légumes.",
+            "Cuire la source de protéines à feu moyen.",
+            "Ajouter les légumes et laisser mijoter quelques minutes.",
+            "Servir avec les féculents et assaisonner.",
+          ],
+      goodPoints: teaser
+        ? ["Bon équilibre protéines / légumes / féculents."]
+        : ["Bon équilibre protéines / légumes / féculents.", "Recette simple à préparer."],
+      improvePoints: teaser
+        ? []
+        : ["Une source de calcium pourrait être ajoutée (ex : un peu de fromage râpé)."],
       fitScore: 74,
     } satisfies RecipeScanResult;
   },
@@ -91,7 +100,7 @@ export const mockProvider: AiProvider = {
     } satisfies AdaptedRecipe;
   },
 
-  async generateRecipesFromIngredients(input) {
+  async generateRecipesFromIngredients(input, _profile, teaser) {
     await fakeDelay();
     const ingredients = input.ingredients ?? [];
     const base = ingredients.length > 0 ? ingredients.slice(0, 3).join(", ") : "vos ingrédients";
@@ -136,7 +145,10 @@ export const mockProvider: AiProvider = {
       },
     ];
 
-    return recipes;
+    return {
+      ingredientsDetected: true,
+      recipes: teaser ? recipes.slice(0, 1) : recipes,
+    } satisfies GeneratedRecipesResult;
   },
 
   async coachReply(messages) {

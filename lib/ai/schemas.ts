@@ -44,6 +44,11 @@ export const mealAnalysisSchema = {
 export const recipeScanSchema = {
   type: "object",
   properties: {
+    recipeDetected: {
+      type: "boolean",
+      description:
+        "false si l'image ne montre PAS clairement une recette (photo, capture d'écran ou page de livre lisible)",
+    },
     title: { type: "string" },
     summary: { type: "string", description: "Résumé en 1-2 phrases" },
     servings: { type: "string", description: "Ex: '4 personnes', chaîne vide si indéterminé" },
@@ -54,7 +59,18 @@ export const recipeScanSchema = {
     improvePoints: { type: "array", items: { type: "string" } },
     fitScore: { type: "integer", minimum: 0, maximum: 100, description: "Adéquation avec le profil utilisatrice" },
   },
-  required: ["title", "summary", "servings", "time", "ingredients", "steps", "goodPoints", "improvePoints", "fitScore"],
+  required: [
+    "recipeDetected",
+    "title",
+    "summary",
+    "servings",
+    "time",
+    "ingredients",
+    "steps",
+    "goodPoints",
+    "improvePoints",
+    "fitScore",
+  ],
 };
 
 export const adaptedRecipeSchema = {
@@ -93,9 +109,14 @@ export const adaptedRecipeSchema = {
 export const ingredientRecipesSchema = {
   type: "object",
   properties: {
+    ingredientsDetected: {
+      type: "boolean",
+      description:
+        "Si l'entrée est une liste textuelle, toujours true. Si une photo a été fournie, false si elle ne montre pas clairement des aliments/ingrédients.",
+    },
     recipes: {
       type: "array",
-      minItems: 3,
+      minItems: 1,
       maxItems: 3,
       items: {
         type: "object",
@@ -110,5 +131,5 @@ export const ingredientRecipesSchema = {
       },
     },
   },
-  required: ["recipes"],
+  required: ["ingredientsDetected", "recipes"],
 };

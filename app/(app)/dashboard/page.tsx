@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
-import { Camera, ChefHat, Refrigerator, MessageCircle, Image as ImageIcon, ChevronRight } from "lucide-react";
+import { Camera, ChefHat, Refrigerator, MessageCircle, ChevronRight } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,9 +35,14 @@ export default async function DashboardPage() {
 
       <Card>
         <CardContent className="flex flex-col gap-4 p-5">
-          <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/60 text-muted-foreground">
-            <ImageIcon className="h-8 w-8" />
-            <p className="text-xs">Photo d&apos;ambiance : une assiette</p>
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border">
+            <Image
+              src="/images/healthy-bowl.jpg"
+              alt="Assiette colorée et équilibrée"
+              fill
+              sizes="(min-width: 768px) 28rem, 90vw"
+              className="object-cover"
+            />
           </div>
           <div>
             <p className="font-heading text-lg font-medium">Photographiez votre repas</p>

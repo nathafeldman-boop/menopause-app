@@ -37,6 +37,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
+  if (recipe.is_teaser) {
+    // Un aperçu ne contient qu'une partie des ingrédients et aucune étape :
+    // il n'y a pas assez de matière pour adapter la recette sans inventer le reste.
+    return NextResponse.json({ error: "rescan_required" }, { status: 422 });
+  }
+
   try {
     const extracted = (recipe.extracted ?? {}) as {
       ingredients?: string[];
@@ -45,6 +51,7 @@ export async function POST(request: Request) {
       time?: string;
     };
     const recipeForAi: RecipeScanResult = {
+      recipeDetected: true,
       title: recipe.title ?? "Recette",
       summary: recipe.summary ?? "",
       servings: extracted.servings ?? "",

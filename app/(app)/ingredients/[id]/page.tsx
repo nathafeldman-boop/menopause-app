@@ -5,7 +5,10 @@ import { ArrowLeft } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { RecipeCard } from "@/components/ingredients/recipe-card";
+import { LockedContent } from "@/components/billing/locked-content";
 import type { GeneratedRecipe } from "@/lib/ai/types";
+
+const FULL_RECIPE_COUNT = 3;
 
 export const metadata: Metadata = { title: "Vos recettes" };
 
@@ -42,6 +45,15 @@ export default async function IngredientRecipesPage({
         {recipes.map((recipe, i) => (
           <RecipeCard key={i} recipe={recipe} />
         ))}
+        {row.is_teaser &&
+          Array.from({ length: Math.max(0, FULL_RECIPE_COUNT - recipes.length) }).map((_, i) => (
+            <LockedContent
+              key={`locked-${i}`}
+              label="Recette verrouillée"
+              description="Débloquez les recettes suivantes avec votre abonnement."
+              lines={2}
+            />
+          ))}
       </div>
     </div>
   );

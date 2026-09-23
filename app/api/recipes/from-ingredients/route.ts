@@ -15,10 +15,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  if (!(await hasActiveSubscription(supabase, user.id))) {
-    return NextResponse.json({ error: "subscription_required" }, { status: 402 });
-  }
-
   const formData = await request.formData();
   const ingredientsRaw = formData.get("ingredients");
   const photo = formData.get("photo");
@@ -38,6 +34,8 @@ export async function POST(request: Request) {
   }
 
   try {
+    const subscribed = await hasActiveSubscription(supabase, user.id);
+
     let image: { data: string; mimeType: string } | undefined;
     if (hasPhoto) {
       const buffer = Buffer.from(await (photo as File).arrayBuffer());
@@ -45,14 +43,23 @@ export async function POST(request: Request) {
     }
 
     const profile = await getProfile(supabase, user.id);
-    const recipes = await ai.generateRecipesFromIngredients({ ingredients, image }, toAiContext(profile));
+    const result = await ai.generateRecipesFromIngredients(
+      { ingredients, image },
+      toAiContext(profile),
+      !subscribed
+    );
+
+    if (image && !result.ingredientsDetected) {
+      return NextResponse.json({ error: "no_ingredients_detected" }, { status: 422 });
+    }
 
     const { data: row, error: insertError } = await supabase
       .from("ingredient_recipes")
       .insert({
         user_id: user.id,
         ingredients_input: ingredients.length > 0 ? ingredients : ["Photo des ingrédients"],
-        recipes,
+        recipes: result.recipes,
+        is_teaser: !subscribed,
       })
       .select("id")
       .single();

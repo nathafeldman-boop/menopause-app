@@ -6,10 +6,12 @@ import { ArrowLeft, Sparkles, Users, Clock } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveSubscription } from "@/lib/subscription";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScoreGauge } from "@/components/meal/score-gauge";
 import { AdaptRecipeButton } from "@/components/recipe/adapt-recipe-button";
 import { PaywallPrompt } from "@/components/billing/paywall-prompt";
+import { LockedContent } from "@/components/billing/locked-content";
 import { getFitScoreLabel } from "@/lib/score";
 import type { AdaptedIngredient } from "@/lib/ai/types";
 
@@ -92,28 +94,39 @@ export default async function RecipeResultPage({ params }: { params: Promise<{ i
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="p-5">
-          <h2 className="mb-3 font-heading text-lg font-medium">Étapes</h2>
-          <ol className="flex flex-col gap-2 text-sm">
-            {(extracted.steps ?? []).map((step, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="font-medium text-primary">{i + 1}.</span>
-                <span>{step}</span>
-              </li>
-            ))}
-          </ol>
-        </CardContent>
-      </Card>
+      {recipe.is_teaser ? (
+        <LockedContent
+          label="Ingrédients complets et étapes verrouillés"
+          description="Débloquez la recette en entier avec votre abonnement."
+        />
+      ) : (
+        <Card>
+          <CardContent className="p-5">
+            <h2 className="mb-3 font-heading text-lg font-medium">Étapes</h2>
+            <ol className="flex flex-col gap-2 text-sm">
+              {(extracted.steps ?? []).map((step, i) => (
+                <li key={i} className="flex gap-2">
+                  <span className="font-medium text-primary">{i + 1}.</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </CardContent>
+        </Card>
+      )}
 
       {!adapted &&
-        (subscribed ? (
-          <AdaptRecipeButton recipeId={recipe.id} />
-        ) : (
+        (!subscribed ? (
           <PaywallPrompt
             title="Adaptez cette recette"
             description="L'adaptation de recette fait partie de votre accompagnement Alma."
           />
+        ) : recipe.is_teaser ? (
+          <Button asChild size="lg" variant="outline">
+            <Link href="/recette/scanner">Scanner cette recette en entier pour l&apos;adapter</Link>
+          </Button>
+        ) : (
+          <AdaptRecipeButton recipeId={recipe.id} />
         ))}
     </div>
   );

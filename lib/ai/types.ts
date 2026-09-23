@@ -17,6 +17,7 @@ export type MealAnalysisResult = {
 };
 
 export type RecipeScanResult = {
+  recipeDetected: boolean; // false si la photo ne montre pas clairement une recette
   title: string;
   summary: string;
   servings: string; // ex: "4 personnes", "" si indéterminé
@@ -50,6 +51,11 @@ export type GeneratedRecipe = {
   whyFits: string;
 };
 
+export type GeneratedRecipesResult = {
+  ingredientsDetected: boolean; // false si une photo a été fournie et ne montre pas d'aliments
+  recipes: GeneratedRecipe[];
+};
+
 export type UserProfileContext = {
   goal: string | null;
   dietType: string | null;
@@ -69,14 +75,15 @@ export interface AiProvider {
     profile: UserProfileContext
   ): Promise<MealAnalysisResult>;
 
-  scanRecipePhoto(imageBase64: string, mimeType: string): Promise<RecipeScanResult>;
+  scanRecipePhoto(imageBase64: string, mimeType: string, teaser: boolean): Promise<RecipeScanResult>;
 
   adaptRecipe(recipe: RecipeScanResult, profile: UserProfileContext): Promise<AdaptedRecipe>;
 
   generateRecipesFromIngredients(
     input: { ingredients?: string[]; image?: { data: string; mimeType: string } },
-    profile: UserProfileContext
-  ): Promise<GeneratedRecipe[]>;
+    profile: UserProfileContext,
+    teaser: boolean
+  ): Promise<GeneratedRecipesResult>;
 
   coachReply(messages: CoachMessage[], profile: UserProfileContext): Promise<string>;
 }

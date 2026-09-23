@@ -12,7 +12,7 @@ import type {
   MealAnalysisResult,
   RecipeScanResult,
   AdaptedRecipe,
-  GeneratedRecipe,
+  GeneratedRecipesResult,
   UserProfileContext,
   CoachMessage,
 } from "./types";
@@ -80,10 +80,24 @@ Donne 2 à 4 points déjà positifs, 1 à 3 points à améliorer (formulés sans
     });
   },
 
-  async scanRecipePhoto(imageBase64, mimeType) {
-    const prompt = `Cette image montre une recette (photo, capture d'écran ou page de livre). Extrais et comprends la recette : titre, nombre de personnes, temps de préparation, ingrédients, étapes. Si le nombre de personnes ou le temps n'est pas indiqué, laisse une chaîne vide plutôt que de deviner.
+  async scanRecipePhoto(imageBase64, mimeType, teaser) {
+    const prompt = `Cette image est envoyée par une utilisatrice qui pense y avoir photographié une recette (photo, capture d'écran ou page de livre).
 
-Donne aussi un résumé en 1-2 phrases, 2-3 points positifs, 1-3 points à améliorer d'un point de vue nutritionnel général, et un score d'adéquation (0-100) avec une alimentation équilibrée adaptée à une femme en péri/ménopause (sans jugement, reste bienveillant).`;
+ÉTAPE 1 — OBLIGATOIRE, à faire avant tout le reste : détermine si cette image montre réellement une recette lisible (titre et/ou ingrédients et/ou étapes identifiables), avec certitude.
+Mets recipeDetected à false si l'image montre : un plan de travail ou une table sans texte de recette, un objet non lié à une recette, une personne, un lieu, une image floue/illisible, ou tout ce qui n'est pas clairement une recette.
+Mets recipeDetected à true UNIQUEMENT si tu peux identifier avec certitude le contenu d'une recette.
+
+Si recipeDetected est false : mets tous les champs texte à "", tous les tableaux à des tableaux vides, et fitScore à 0. Ne poursuis pas avec une recette inventée.
+
+Si recipeDetected est true, extrais et comprends la recette : titre, nombre de personnes, temps de préparation, ingrédients, étapes. Si le nombre de personnes ou le temps n'est pas indiqué, laisse une chaîne vide plutôt que de deviner.
+
+Donne aussi un résumé en 1-2 phrases, 2-3 points positifs, 1-3 points à améliorer d'un point de vue nutritionnel général, et un score d'adéquation (0-100) avec une alimentation équilibrée adaptée à une femme en péri/ménopause (sans jugement, reste bienveillant).${
+      teaser
+        ? `
+
+IMPORTANT — mode aperçu gratuit (utilisatrice non abonnée) : ne donne QUE title, summary, servings, time, fitScore, et UNIQUEMENT les 2 premiers ingrédients dans "ingredients" (pas plus). Laisse "steps" à un tableau vide et "improvePoints" à un tableau vide. Donne un seul élément dans "goodPoints".`
+        : ""
+    }`;
 
     return generateJson<RecipeScanResult>({
       prompt,
@@ -107,23 +121,28 @@ Donne la version adaptée complète : titre, un nouveau score d'adéquation (0-1
     return generateJson<AdaptedRecipe>({ prompt, schema: adaptedRecipeSchema });
   },
 
-  async generateRecipesFromIngredients(input, profile) {
+  async generateRecipesFromIngredients(input, profile, teaser) {
     const ingredientsLine = input.ingredients?.length
-      ? `L'utilisatrice a saisi ces ingrédients disponibles : ${input.ingredients.join(", ")}.`
-      : "L'utilisatrice a fourni une photo de ses ingrédients disponibles (frigo, placard, plan de travail) : identifie-les visuellement.";
+      ? `L'utilisatrice a saisi ces ingrédients disponibles : ${input.ingredients.join(", ")}. C'est une saisie texte : mets toujours ingredientsDetected à true.`
+      : `L'utilisatrice a fourni une photo de ses ingrédients disponibles (frigo, placard, plan de travail).
+
+ÉTAPE 1 — OBLIGATOIRE, à faire avant tout le reste : détermine si cette photo montre réellement des aliments ou ingrédients, avec certitude. Mets ingredientsDetected à false si la photo ne montre clairement aucun aliment (table vide, objet non alimentaire, personne, image floue/illisible). Si ingredientsDetected est false, mets recipes à un tableau vide et ne poursuis pas. Sinon, identifie les ingrédients visuellement.`;
 
     const prompt = `${ingredientsLine}
 
 ${profileContextBlock(profile)}
 
-Propose exactement 3 recettes réalisables principalement avec ces ingrédients (des ingrédients de base courants comme sel, huile, poivre peuvent être supposés disponibles). Pour chaque recette : nom, temps approximatif, liste d'ingrédients, étapes claires et numérotées en texte, et une phrase expliquant pourquoi elle correspond au profil de l'utilisatrice.`;
+${
+  teaser
+    ? `IMPORTANT — mode aperçu gratuit (utilisatrice non abonnée) : propose UNE SEULE recette complète (pas plus), réalisable principalement avec ces ingrédients (des ingrédients de base courants comme sel, huile, poivre peuvent être supposés disponibles). Nom, temps approximatif, liste d'ingrédients, étapes claires et numérotées, et une phrase expliquant pourquoi elle correspond au profil de l'utilisatrice.`
+    : `Propose exactement 3 recettes réalisables principalement avec ces ingrédients (des ingrédients de base courants comme sel, huile, poivre peuvent être supposés disponibles). Pour chaque recette : nom, temps approximatif, liste d'ingrédients, étapes claires et numérotées en texte, et une phrase expliquant pourquoi elle correspond au profil de l'utilisatrice.`
+}`;
 
-    const result = await generateJson<{ recipes: GeneratedRecipe[] }>({
+    return generateJson<GeneratedRecipesResult>({
       prompt,
       schema: ingredientRecipesSchema,
       image: input.image,
     });
-    return result.recipes;
   },
 
   async coachReply(messages: CoachMessage[], profile: UserProfileContext) {

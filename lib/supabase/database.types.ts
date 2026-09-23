@@ -7,6 +7,8 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
@@ -73,6 +75,7 @@ export type Database = {
           created_at: string
           id: string
           ingredients_input: string[]
+          is_teaser: boolean
           recipes: Json
           user_id: string
         }
@@ -80,6 +83,7 @@ export type Database = {
           created_at?: string
           id?: string
           ingredients_input: string[]
+          is_teaser?: boolean
           recipes: Json
           user_id: string
         }
@@ -87,6 +91,7 @@ export type Database = {
           created_at?: string
           id?: string
           ingredients_input?: string[]
+          is_teaser?: boolean
           recipes?: Json
           user_id?: string
         }
@@ -149,48 +154,84 @@ export type Database = {
         }
         Relationships: []
       }
+      meal_plans: {
+        Row: {
+          created_at: string
+          days: Json
+          id: string
+          is_teaser: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days?: Json
+          id?: string
+          is_teaser?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days?: Json
+          id?: string
+          is_teaser?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          age: number | null
           allergies: string | null
           created_at: string
           diet_type: string | null
           disliked_foods: string | null
           email: string | null
           goal: string | null
+          height_cm: number | null
           household_size: string | null
           id: string
           important_note: string | null
           onboarding_completed: boolean
           recipe_preference: string | null
+          todays_meals: string | null
           updated_at: string
+          weight_kg: number | null
         }
         Insert: {
+          age?: number | null
           allergies?: string | null
           created_at?: string
           diet_type?: string | null
           disliked_foods?: string | null
           email?: string | null
           goal?: string | null
+          height_cm?: number | null
           household_size?: string | null
           id: string
           important_note?: string | null
           onboarding_completed?: boolean
           recipe_preference?: string | null
+          todays_meals?: string | null
           updated_at?: string
+          weight_kg?: number | null
         }
         Update: {
+          age?: number | null
           allergies?: string | null
           created_at?: string
           diet_type?: string | null
           disliked_foods?: string | null
           email?: string | null
           goal?: string | null
+          height_cm?: number | null
           household_size?: string | null
           id?: string
           important_note?: string | null
           onboarding_completed?: boolean
           recipe_preference?: string | null
+          todays_meals?: string | null
           updated_at?: string
+          weight_kg?: number | null
         }
         Relationships: []
       }
@@ -204,6 +245,7 @@ export type Database = {
           id: string
           image_path: string | null
           improve_points: string[]
+          is_teaser: boolean
           summary: string | null
           title: string | null
           user_id: string
@@ -217,6 +259,7 @@ export type Database = {
           id?: string
           image_path?: string | null
           improve_points?: string[]
+          is_teaser?: boolean
           summary?: string | null
           title?: string | null
           user_id: string
@@ -230,6 +273,7 @@ export type Database = {
           id?: string
           image_path?: string | null
           improve_points?: string[]
+          is_teaser?: boolean
           summary?: string | null
           title?: string | null
           user_id?: string
@@ -290,7 +334,7 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals["public"]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
@@ -370,3 +414,43 @@ export type TablesUpdate<
       ? U
       : never
     : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never) = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never) = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const
