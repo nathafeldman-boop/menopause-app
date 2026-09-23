@@ -13,6 +13,9 @@ Règles strictes, à respecter absolument :
 export function profileContextBlock(profile: UserProfileContext): string {
   const lines: string[] = [];
   if (profile.goal) lines.push(`- Objectif principal : ${profile.goal}`);
+  if (profile.age) lines.push(`- Âge : ${profile.age} ans`);
+  if (profile.heightCm) lines.push(`- Taille : ${profile.heightCm} cm`);
+  if (profile.weightKg) lines.push(`- Poids : ${profile.weightKg} kg`);
   if (profile.dietType) lines.push(`- Type d'alimentation : ${profile.dietType}`);
   if (profile.allergies) lines.push(`- Allergies / intolérances : ${profile.allergies}`);
   if (profile.dislikedFoods) lines.push(`- Aliments non appréciés : ${profile.dislikedFoods}`);

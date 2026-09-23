@@ -50,6 +50,9 @@ export default async function ProfilePage() {
         </CardHeader>
         <CardContent className="flex flex-col gap-3 text-sm">
           <ProfileRow label="Objectif" value={profile?.goal ? GOAL_LABELS[profile.goal] ?? profile.goal : "—"} />
+          <ProfileRow label="Âge" value={profile?.age ? `${profile.age} ans` : "—"} />
+          <ProfileRow label="Taille" value={profile?.height_cm ? `${profile.height_cm} cm` : "—"} />
+          <ProfileRow label="Poids" value={profile?.weight_kg ? `${profile.weight_kg} kg` : "—"} />
           <ProfileRow
             label="Alimentation"
             value={profile?.diet_type ? DIET_LABELS[profile.diet_type] ?? profile.diet_type : "—"}

@@ -73,12 +73,16 @@ export type WeeklyMealPlan = {
 
 export type UserProfileContext = {
   goal: string | null;
+  age: number | null;
+  heightCm: number | null;
+  weightKg: number | null;
   dietType: string | null;
   allergies: string | null;
   dislikedFoods: string | null;
   householdSize: string | null;
   recipePreference: string | null;
   importantNote: string | null;
+  todaysMeals: string | null;
 };
 
 export type CoachMessage = { role: "user" | "assistant"; content: string };
