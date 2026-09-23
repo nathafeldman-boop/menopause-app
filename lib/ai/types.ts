@@ -56,6 +56,21 @@ export type GeneratedRecipesResult = {
   recipes: GeneratedRecipe[];
 };
 
+export type PlannedMeal = {
+  type: string; // ex: "Petit-déjeuner", "Déjeuner", "Dîner"
+  name: string;
+  description: string; // 1 phrase
+};
+
+export type DayPlan = {
+  day: string; // ex: "Lundi"
+  meals: PlannedMeal[];
+};
+
+export type WeeklyMealPlan = {
+  days: DayPlan[]; // 1 jour en mode aperçu, 7 en mode complet
+};
+
 export type UserProfileContext = {
   goal: string | null;
   dietType: string | null;
@@ -86,4 +101,10 @@ export interface AiProvider {
   ): Promise<GeneratedRecipesResult>;
 
   coachReply(messages: CoachMessage[], profile: UserProfileContext): Promise<string>;
+
+  generateWeeklyMealPlan(
+    profile: UserProfileContext,
+    todaysMeals: string,
+    teaser: boolean
+  ): Promise<WeeklyMealPlan>;
 }

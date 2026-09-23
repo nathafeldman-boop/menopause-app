@@ -8,10 +8,12 @@ export function LockedContent({
   label,
   description = "Débloquez la suite avec votre abonnement Alma.",
   lines = 3,
+  showCta = true,
 }: {
   label: string;
   description?: string;
   lines?: number;
+  showCta?: boolean;
 }) {
   return (
     <Card className="border-dashed">
@@ -32,9 +34,11 @@ export function LockedContent({
             ))}
           </div>
         </div>
-        <Button asChild size="sm">
-          <Link href="/abonnement">Débloquer avec l&apos;abonnement</Link>
-        </Button>
+        {showCta && (
+          <Button asChild size="sm">
+            <Link href="/abonnement">Débloquer avec l&apos;abonnement</Link>
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

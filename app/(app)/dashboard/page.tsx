@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { Camera, ChefHat, Refrigerator, MessageCircle, ChevronRight } from "lucide-react";
+import { Camera, ChefHat, Refrigerator, MessageCircle, ChevronRight, CalendarDays } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
@@ -76,6 +76,16 @@ export default async function DashboardPage() {
                 <Refrigerator className="h-5 w-5" />
               </div>
               <p className="font-medium leading-snug">Recettes avec mes ingrédients</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/plan">
+          <Card className="h-full transition-colors hover:bg-muted/60">
+            <CardContent className="flex flex-col gap-3 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/15 text-secondary">
+                <CalendarDays className="h-5 w-5" />
+              </div>
+              <p className="font-medium leading-snug">Mon plan de la semaine</p>
             </CardContent>
           </Card>
         </Link>

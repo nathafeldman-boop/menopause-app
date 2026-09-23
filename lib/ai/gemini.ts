@@ -6,6 +6,7 @@ import {
   recipeScanSchema,
   adaptedRecipeSchema,
   ingredientRecipesSchema,
+  weeklyMealPlanSchema,
 } from "./schemas";
 import type {
   AiProvider,
@@ -13,6 +14,7 @@ import type {
   RecipeScanResult,
   AdaptedRecipe,
   GeneratedRecipesResult,
+  WeeklyMealPlan,
   UserProfileContext,
   CoachMessage,
 } from "./types";
@@ -164,5 +166,28 @@ Réponds au dernier message de l'utilisatrice en tant que coach alimentaire bien
     });
 
     return response.text ?? "Désolé, je n'ai pas pu générer de réponse. Pouvez-vous reformuler ?";
+  },
+
+  async generateWeeklyMealPlan(profile, todaysMeals, teaser) {
+    const todaysMealsLine = todaysMeals
+      ? `Ce qu'elle a déjà mangé aujourd'hui : ${todaysMeals}.`
+      : "Elle n'a pas encore précisé ce qu'elle a mangé aujourd'hui.";
+
+    const prompt = `Construis un plan de repas hebdomadaire (petit-déjeuner, déjeuner, dîner) adapté à une femme en péri/ménopause.
+
+${profileContextBlock(profile)}
+${todaysMealsLine}
+
+Pour chaque repas : un type (Petit-déjeuner/Déjeuner/Dîner), un nom de plat, et une description en une phrase, sans calories ni grammes précis inventés. Varie les repas d'un jour à l'autre, reste réaliste et simple à préparer.${
+      teaser
+        ? `
+
+IMPORTANT — mode aperçu gratuit (utilisatrice non abonnée) : donne UN SEUL jour complet (le premier jour de la semaine, "Lundi"), avec ses 3 repas. Ne donne pas les autres jours.`
+        : `
+
+Donne les 7 jours de la semaine (Lundi à Dimanche), chacun avec ses 3 repas.`
+    }`;
+
+    return generateJson<WeeklyMealPlan>({ prompt, schema: weeklyMealPlanSchema });
   },
 };

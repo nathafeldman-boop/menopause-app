@@ -5,6 +5,8 @@ import type {
   AdaptedRecipe,
   GeneratedRecipe,
   GeneratedRecipesResult,
+  WeeklyMealPlan,
+  DayPlan,
 } from "./types";
 
 async function fakeDelay() {
@@ -168,5 +170,54 @@ export const mockProvider: AiProvider = {
     }
 
     return "Bonne question ! Pouvez-vous m'en dire un peu plus (ce que vous avez sous la main, votre envie du moment) pour que je vous propose quelque chose d'adapté ?";
+  },
+
+  async generateWeeklyMealPlan(_profile, _todaysMeals, teaser) {
+    await fakeDelay();
+    const dayNames = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+    const menu: Array<[string, string, string][]> = [
+      [
+        ["Petit-déjeuner", "Yaourt grec, fruits rouges et amandes", "Source de calcium et de fibres pour bien démarrer."],
+        ["Déjeuner", "Saumon, quinoa et légumes rôtis", "Protéines et bonnes graisses, avec des légumes variés."],
+        ["Dîner", "Soupe de lentilles corail", "Léger le soir, riche en fibres et en protéines végétales."],
+      ],
+      [
+        ["Petit-déjeuner", "Porridge avoine et graines de lin", "Fibres douces pour le transit."],
+        ["Déjeuner", "Poulet rôti, patates douces et brocolis", "Un classique équilibré et rassasiant."],
+        ["Dîner", "Omelette aux épinards", "Rapide, riche en protéines et en fer."],
+      ],
+      [
+        ["Petit-déjeuner", "Tartines complètes, fromage frais", "Un peu de calcium pour la matinée."],
+        ["Déjeuner", "Bol de riz complet, œuf et légumes", "Simple, complet, facile à préparer à l'avance."],
+        ["Dîner", "Poêlée de courgettes et feta", "Léger avec une bonne source de calcium."],
+      ],
+      [
+        ["Petit-déjeuner", "Smoothie banane, épinards et lait végétal", "Vitamines et fibres pour bien commencer."],
+        ["Déjeuner", "Cabillaud, riz et haricots verts", "Protéines maigres et légumes verts."],
+        ["Dîner", "Salade de pois chiches", "Protéines végétales, fraîche et rassasiante."],
+      ],
+      [
+        ["Petit-déjeuner", "Yaourt nature et flocons d'avoine", "Simple et rassasiant."],
+        ["Déjeuner", "Gratin de courgettes à la ricotta", "Calcium et légumes dans un plat réconfortant."],
+        ["Dîner", "Velouté de potiron", "Léger, doux, riche en fibres."],
+      ],
+      [
+        ["Petit-déjeuner", "Œufs brouillés et pain complet", "Bonne source de protéines du matin."],
+        ["Déjeuner", "Poêlée de crevettes, légumes et riz", "Rapide et équilibré."],
+        ["Dîner", "Soupe miso et tofu", "Léger et réconfortant."],
+      ],
+      [
+        ["Petit-déjeuner", "Pancakes à la banane sans sucre ajouté", "Un plaisir simple du dimanche."],
+        ["Déjeuner", "Rôti de dinde, légumes de saison", "Repas familial équilibré."],
+        ["Dîner", "Soupe de légumes maison", "Léger pour finir la semaine."],
+      ],
+    ];
+
+    const days: DayPlan[] = (teaser ? menu.slice(0, 1) : menu).map((meals, i) => ({
+      day: dayNames[i],
+      meals: meals.map(([type, name, description]) => ({ type, name, description })),
+    }));
+
+    return { days } satisfies WeeklyMealPlan;
   },
 };

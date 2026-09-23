@@ -133,3 +133,34 @@ export const ingredientRecipesSchema = {
   },
   required: ["ingredientsDetected", "recipes"],
 };
+
+export const weeklyMealPlanSchema = {
+  type: "object",
+  properties: {
+    days: {
+      type: "array",
+      minItems: 1,
+      maxItems: 7,
+      items: {
+        type: "object",
+        properties: {
+          day: { type: "string", description: "Ex: 'Lundi'" },
+          meals: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                type: { type: "string", description: "Ex: 'Petit-déjeuner', 'Déjeuner', 'Dîner'" },
+                name: { type: "string" },
+                description: { type: "string", description: "Une phrase, sans calories/grammes précis" },
+              },
+              required: ["type", "name", "description"],
+            },
+          },
+        },
+        required: ["day", "meals"],
+      },
+    },
+  },
+  required: ["days"],
+};

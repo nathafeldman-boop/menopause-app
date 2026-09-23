@@ -27,6 +27,10 @@ export const ai: AiProvider = hasKey
         mockProvider.generateRecipesFromIngredients
       ),
       coachReply: withFallback(geminiProvider.coachReply, mockProvider.coachReply),
+      generateWeeklyMealPlan: withFallback(
+        geminiProvider.generateWeeklyMealPlan,
+        mockProvider.generateWeeklyMealPlan
+      ),
     }
   : mockProvider;
 
