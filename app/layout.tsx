@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -18,6 +18,16 @@ export const metadata: Metadata = {
   title: "Alma — Bien manger pendant la ménopause",
   description:
     "Photographiez votre repas, votre recette ou vos ingrédients. Votre coach alimentaire vous aide à mieux manger pendant la périménopause et la ménopause, sans régime compliqué.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Alma",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#fdf1f4",
+  colorScheme: "light",
 };
 
 export default function RootLayout({
