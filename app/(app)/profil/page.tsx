@@ -23,6 +23,56 @@ const DIET_LABELS: Record<string, string> = {
   other: "Autre",
 };
 
+const MENOPAUSE_STAGE_LABELS: Record<string, string> = {
+  perimenopause: "Périménopause",
+  menopause: "Ménopause confirmée",
+  postmenopause: "Post-ménopause",
+  unsure: "Je ne sais pas trop",
+};
+
+const ACTIVITY_LABELS: Record<string, string> = {
+  sedentary: "Plutôt sédentaire",
+  light: "Un peu active",
+  active: "Régulièrement active",
+  very_active: "Très active ou sportive",
+};
+
+const SLEEP_LABELS: Record<string, string> = {
+  good: "Plutôt bon",
+  average: "Moyen, irrégulier",
+  poor: "Je dors mal souvent",
+};
+
+const STRESS_LABELS: Record<string, string> = {
+  low: "Plutôt faible",
+  moderate: "Modéré",
+  high: "Élevé",
+};
+
+const HYDRATION_LABELS: Record<string, string> = {
+  low: "Moins d'1 litre / jour",
+  medium: "1 à 1,5 litre / jour",
+  high: "Plus d'1,5 litre / jour",
+};
+
+const COOKING_SKILL_LABELS: Record<string, string> = {
+  beginner: "Débutante",
+  comfortable: "À l'aise",
+  confident: "Très à l'aise",
+};
+
+const COOKING_TIME_LABELS: Record<string, string> = {
+  short: "Moins de 15 min",
+  medium: "15 à 30 min",
+  long: "Plus de 30 min",
+};
+
+const SNACKING_LABELS: Record<string, string> = {
+  rarely: "Rarement",
+  sometimes: "Parfois",
+  often: "Souvent",
+};
+
 export default async function ProfilePage() {
   const supabase = await createClient();
   const {
@@ -64,6 +114,55 @@ export default async function ProfilePage() {
           {profile?.important_note && (
             <ProfileRow label="À prendre en compte" value={profile.important_note} />
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Ma santé &amp; mon rythme</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3 text-sm">
+          <ProfileRow
+            label="Stade"
+            value={profile?.menopause_stage ? MENOPAUSE_STAGE_LABELS[profile.menopause_stage] ?? profile.menopause_stage : "—"}
+          />
+          <ProfileRow
+            label="Symptômes"
+            value={profile?.symptoms && profile.symptoms.length > 0 ? profile.symptoms.join(", ") : "Aucun indiqué"}
+          />
+          <ProfileRow
+            label="Activité physique"
+            value={profile?.activity_level ? ACTIVITY_LABELS[profile.activity_level] ?? profile.activity_level : "—"}
+          />
+          <ProfileRow
+            label="Sommeil"
+            value={profile?.sleep_quality ? SLEEP_LABELS[profile.sleep_quality] ?? profile.sleep_quality : "—"}
+          />
+          <ProfileRow
+            label="Stress"
+            value={profile?.stress_level ? STRESS_LABELS[profile.stress_level] ?? profile.stress_level : "—"}
+          />
+          <ProfileRow
+            label="Hydratation"
+            value={profile?.hydration ? HYDRATION_LABELS[profile.hydration] ?? profile.hydration : "—"}
+          />
+          <ProfileRow label="Compléments" value={profile?.supplements || "Aucun indiqué"} />
+          <ProfileRow
+            label="Niveau en cuisine"
+            value={profile?.cooking_skill ? COOKING_SKILL_LABELS[profile.cooking_skill] ?? profile.cooking_skill : "—"}
+          />
+          <ProfileRow
+            label="Temps de préparation"
+            value={profile?.cooking_time ? COOKING_TIME_LABELS[profile.cooking_time] ?? profile.cooking_time : "—"}
+          />
+          <ProfileRow
+            label="Grignotage"
+            value={
+              profile?.snacking_frequency
+                ? SNACKING_LABELS[profile.snacking_frequency] ?? profile.snacking_frequency
+                : "—"
+            }
+          />
         </CardContent>
       </Card>
 

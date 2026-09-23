@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getProfile, toAiContext } from "@/lib/profile";
 import { ai } from "@/lib/ai";
 import { hasActiveSubscription } from "@/lib/subscription";
 
@@ -24,12 +25,13 @@ export async function POST(request: Request) {
 
   try {
     const subscribed = await hasActiveSubscription(supabase, user.id);
+    const profile = await getProfile(supabase, user.id);
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const mimeType = file.type || "image/jpeg";
     const base64 = buffer.toString("base64");
 
-    const result = await ai.scanRecipePhoto(base64, mimeType, !subscribed);
+    const result = await ai.scanRecipePhoto(base64, mimeType, toAiContext(profile), !subscribed);
 
     if (!result.recipeDetected) {
       return NextResponse.json({ error: "no_recipe_detected" }, { status: 422 });

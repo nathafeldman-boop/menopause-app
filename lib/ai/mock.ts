@@ -50,7 +50,7 @@ export const mockProvider: AiProvider = {
     } satisfies MealAnalysisResult;
   },
 
-  async scanRecipePhoto(_imageBase64, _mimeType, teaser) {
+  async scanRecipePhoto(_imageBase64, _mimeType, _profile, teaser) {
     await fakeDelay();
     const ingredients = [
       "200 g de protéine au choix (poulet, poisson, légumineuses)",

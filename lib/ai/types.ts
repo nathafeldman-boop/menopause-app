@@ -76,9 +76,19 @@ export type UserProfileContext = {
   age: number | null;
   heightCm: number | null;
   weightKg: number | null;
+  menopauseStage: string | null;
+  symptoms: string[] | null;
+  activityLevel: string | null;
+  sleepQuality: string | null;
+  stressLevel: string | null;
+  hydration: string | null;
   dietType: string | null;
   allergies: string | null;
+  supplements: string | null;
   dislikedFoods: string | null;
+  cookingSkill: string | null;
+  cookingTime: string | null;
+  snackingFrequency: string | null;
   householdSize: string | null;
   recipePreference: string | null;
   importantNote: string | null;
@@ -94,7 +104,12 @@ export interface AiProvider {
     profile: UserProfileContext
   ): Promise<MealAnalysisResult>;
 
-  scanRecipePhoto(imageBase64: string, mimeType: string, teaser: boolean): Promise<RecipeScanResult>;
+  scanRecipePhoto(
+    imageBase64: string,
+    mimeType: string,
+    profile: UserProfileContext,
+    teaser: boolean
+  ): Promise<RecipeScanResult>;
 
   adaptRecipe(recipe: RecipeScanResult, profile: UserProfileContext): Promise<AdaptedRecipe>;
 

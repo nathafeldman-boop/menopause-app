@@ -180,8 +180,11 @@ export type Database = {
       }
       profiles: {
         Row: {
+          activity_level: string | null
           age: number | null
           allergies: string | null
+          cooking_skill: string | null
+          cooking_time: string | null
           created_at: string
           diet_type: string | null
           disliked_foods: string | null
@@ -189,17 +192,27 @@ export type Database = {
           goal: string | null
           height_cm: number | null
           household_size: string | null
+          hydration: string | null
           id: string
           important_note: string | null
+          menopause_stage: string | null
           onboarding_completed: boolean
           recipe_preference: string | null
+          sleep_quality: string | null
+          snacking_frequency: string | null
+          stress_level: string | null
+          supplements: string | null
+          symptoms: string[] | null
           todays_meals: string | null
           updated_at: string
           weight_kg: number | null
         }
         Insert: {
+          activity_level?: string | null
           age?: number | null
           allergies?: string | null
+          cooking_skill?: string | null
+          cooking_time?: string | null
           created_at?: string
           diet_type?: string | null
           disliked_foods?: string | null
@@ -207,17 +220,27 @@ export type Database = {
           goal?: string | null
           height_cm?: number | null
           household_size?: string | null
+          hydration?: string | null
           id: string
           important_note?: string | null
+          menopause_stage?: string | null
           onboarding_completed?: boolean
           recipe_preference?: string | null
+          sleep_quality?: string | null
+          snacking_frequency?: string | null
+          stress_level?: string | null
+          supplements?: string | null
+          symptoms?: string[] | null
           todays_meals?: string | null
           updated_at?: string
           weight_kg?: number | null
         }
         Update: {
+          activity_level?: string | null
           age?: number | null
           allergies?: string | null
+          cooking_skill?: string | null
+          cooking_time?: string | null
           created_at?: string
           diet_type?: string | null
           disliked_foods?: string | null
@@ -225,10 +248,17 @@ export type Database = {
           goal?: string | null
           height_cm?: number | null
           household_size?: string | null
+          hydration?: string | null
           id?: string
           important_note?: string | null
+          menopause_stage?: string | null
           onboarding_completed?: boolean
           recipe_preference?: string | null
+          sleep_quality?: string | null
+          snacking_frequency?: string | null
+          stress_level?: string | null
+          supplements?: string | null
+          symptoms?: string[] | null
           todays_meals?: string | null
           updated_at?: string
           weight_kg?: number | null

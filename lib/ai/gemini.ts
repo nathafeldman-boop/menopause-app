@@ -82,7 +82,7 @@ Donne 2 à 4 points déjà positifs, 1 à 3 points à améliorer (formulés sans
     });
   },
 
-  async scanRecipePhoto(imageBase64, mimeType, teaser) {
+  async scanRecipePhoto(imageBase64, mimeType, profile, teaser) {
     const prompt = `Cette image est envoyée par une utilisatrice qui pense y avoir photographié une recette (photo, capture d'écran ou page de livre).
 
 ÉTAPE 1 — OBLIGATOIRE, à faire avant tout le reste : détermine si cette image montre réellement une recette lisible (titre et/ou ingrédients et/ou étapes identifiables), avec certitude.
@@ -93,7 +93,9 @@ Si recipeDetected est false : mets tous les champs texte à "", tous les tableau
 
 Si recipeDetected est true, extrais et comprends la recette : titre, nombre de personnes, temps de préparation, ingrédients, étapes. Si le nombre de personnes ou le temps n'est pas indiqué, laisse une chaîne vide plutôt que de deviner.
 
-Donne aussi un résumé en 1-2 phrases, 2-3 points positifs, 1-3 points à améliorer d'un point de vue nutritionnel général, et un score d'adéquation (0-100) avec une alimentation équilibrée adaptée à une femme en péri/ménopause (sans jugement, reste bienveillant).${
+${profileContextBlock(profile)}
+
+Donne aussi un résumé en 1-2 phrases, 2-3 points positifs, 1-3 points à améliorer d'un point de vue nutritionnel général en tenant compte du profil ci-dessus (allergies, aversions, objectif), et un score d'adéquation (0-100) avec le profil de l'utilisatrice (sans jugement, reste bienveillant).${
       teaser
         ? `
 

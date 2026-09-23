@@ -20,6 +20,15 @@ type ChoiceStep = {
   required: true;
 };
 
+type MultiStep = {
+  key: keyof OnboardingData;
+  kind: "multi";
+  question: string;
+  helper?: string;
+  options: { value: string; label: string }[];
+  required: false;
+};
+
 type TextStep = {
   key: keyof OnboardingData;
   kind: "text";
@@ -47,9 +56,11 @@ type InterstitialStep = {
   headline: string;
   body: string;
   visual: "quote" | "bars" | "gauge";
+  bars?: { label: string; target: number }[];
+  gaugeValue?: number;
 };
 
-type Step = ChoiceStep | TextStep | NumberStep | InterstitialStep;
+type Step = ChoiceStep | MultiStep | TextStep | NumberStep | InterstitialStep;
 
 const STEPS: Step[] = [
   {
@@ -97,10 +108,92 @@ const STEPS: Step[] = [
     required: false,
   },
   {
+    key: "menopause_stage",
+    kind: "choice",
+    question: "Où en êtes-vous dans votre parcours ?",
+    required: true,
+    options: [
+      { value: "perimenopause", label: "Périménopause (cycles irréguliers)" },
+      { value: "menopause", label: "Ménopause confirmée (plus de règles depuis 12 mois)" },
+      { value: "postmenopause", label: "Post-ménopause" },
+      { value: "unsure", label: "Je ne sais pas trop" },
+    ],
+  },
+  {
+    key: "symptoms",
+    kind: "multi",
+    question: "Ressentez-vous certains de ces symptômes ?",
+    helper: "Facultatif — sélectionnez tout ce qui s'applique.",
+    required: false,
+    options: [
+      { value: "Bouffées de chaleur", label: "Bouffées de chaleur" },
+      { value: "Troubles du sommeil", label: "Troubles du sommeil" },
+      { value: "Fatigue persistante", label: "Fatigue persistante" },
+      { value: "Prise de poids abdominale", label: "Prise de poids, surtout abdominale" },
+      { value: "Sautes d'humeur", label: "Sautes d'humeur" },
+      { value: "Baisse de libido", label: "Baisse de libido" },
+    ],
+  },
+  {
     kind: "interstitial",
     headline: "Un repère utile",
     body: "Après 45 ans, les besoins en calcium et en protéines augmentent — l'alimentation devient un vrai levier au quotidien.",
     visual: "bars",
+    bars: [
+      { label: "Avant 45 ans", target: 45 },
+      { label: "Après 45 ans", target: 85 },
+    ],
+  },
+  {
+    key: "activity_level",
+    kind: "choice",
+    question: "Quel est votre niveau d'activité physique ?",
+    required: true,
+    options: [
+      { value: "sedentary", label: "Plutôt sédentaire" },
+      { value: "light", label: "Un peu active (marche, jardinage…)" },
+      { value: "active", label: "Régulièrement active" },
+      { value: "very_active", label: "Très active ou sportive" },
+    ],
+  },
+  {
+    key: "sleep_quality",
+    kind: "choice",
+    question: "Comment est votre sommeil en ce moment ?",
+    required: true,
+    options: [
+      { value: "good", label: "Plutôt bon" },
+      { value: "average", label: "Moyen, irrégulier" },
+      { value: "poor", label: "Je dors mal souvent" },
+    ],
+  },
+  {
+    key: "stress_level",
+    kind: "choice",
+    question: "Comment évalueriez-vous votre niveau de stress au quotidien ?",
+    required: true,
+    options: [
+      { value: "low", label: "Plutôt faible" },
+      { value: "moderate", label: "Modéré" },
+      { value: "high", label: "Élevé" },
+    ],
+  },
+  {
+    kind: "interstitial",
+    headline: "Chaque symptôme compte",
+    body: "« J'ai enfin l'impression qu'on tient compte de ce que je vis vraiment, pas juste d'un objectif de poids. » — Corinne, 53 ans",
+    visual: "quote",
+  },
+  {
+    key: "hydration",
+    kind: "choice",
+    question: "Environ combien d'eau buvez-vous par jour ?",
+    required: true,
+    options: [
+      { value: "low", label: "Moins d'1 litre" },
+      { value: "medium", label: "Entre 1 et 1,5 litre" },
+      { value: "high", label: "Plus d'1,5 litre" },
+    ],
   },
   {
     key: "diet_type",
@@ -122,6 +215,14 @@ const STEPS: Step[] = [
     required: false,
   },
   {
+    key: "supplements",
+    kind: "text",
+    question: "Prenez-vous des compléments alimentaires ou vitamines ?",
+    helper: "Facultatif — laissez vide si aucun.",
+    placeholder: "Ex : vitamine D, magnésium, oméga-3…",
+    required: false,
+  },
+  {
     key: "disliked_foods",
     kind: "text",
     question: "Y a-t-il des aliments que vous n'aimez pas ?",
@@ -134,6 +235,47 @@ const STEPS: Step[] = [
     headline: "Ça fait la différence",
     body: "8 utilisatrices sur 10 se sentent plus sereines face à leurs repas après 2 semaines avec Alma.",
     visual: "gauge",
+    gaugeValue: 80,
+  },
+  {
+    key: "cooking_skill",
+    kind: "choice",
+    question: "Comment vous sentez-vous en cuisine ?",
+    required: true,
+    options: [
+      { value: "beginner", label: "Débutante, je préfère simple" },
+      { value: "comfortable", label: "À l'aise" },
+      { value: "confident", label: "Très à l'aise, j'aime cuisiner" },
+    ],
+  },
+  {
+    key: "cooking_time",
+    kind: "choice",
+    question: "Combien de temps avez-vous en général pour préparer un repas ?",
+    required: true,
+    options: [
+      { value: "short", label: "Moins de 15 min" },
+      { value: "medium", label: "15 à 30 min" },
+      { value: "long", label: "Plus de 30 min" },
+    ],
+  },
+  {
+    key: "snacking_frequency",
+    kind: "choice",
+    question: "Grignotez-vous souvent entre les repas ?",
+    required: true,
+    options: [
+      { value: "rarely", label: "Rarement" },
+      { value: "sometimes", label: "Parfois" },
+      { value: "often", label: "Souvent" },
+    ],
+  },
+  {
+    kind: "interstitial",
+    headline: "Vous êtes prête",
+    body: "9 utilisatrices sur 10 se sentent mieux accompagnées dès la première semaine avec Alma.",
+    visual: "gauge",
+    gaugeValue: 90,
   },
   {
     key: "household_size",
@@ -180,9 +322,19 @@ const EMPTY_DATA: OnboardingData = {
   age: "",
   height_cm: "",
   weight_kg: "",
+  menopause_stage: "",
+  symptoms: "",
+  activity_level: "",
+  sleep_quality: "",
+  stress_level: "",
+  hydration: "",
   diet_type: "",
   allergies: "",
+  supplements: "",
   disliked_foods: "",
+  cooking_skill: "",
+  cooking_time: "",
+  snacking_frequency: "",
   household_size: "",
   recipe_preference: "",
   important_note: "",
@@ -209,7 +361,7 @@ function AnimatedIn({ children }: { children: React.ReactNode }) {
   );
 }
 
-function InterstitialVisual({ visual }: { visual: InterstitialStep["visual"] }) {
+function InterstitialVisual({ step }: { step: InterstitialStep }) {
   const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
@@ -217,7 +369,7 @@ function InterstitialVisual({ visual }: { visual: InterstitialStep["visual"] }) 
     return () => clearTimeout(t);
   }, []);
 
-  if (visual === "quote") {
+  if (step.visual === "quote") {
     return (
       <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-4xl text-primary">
         “
@@ -225,16 +377,13 @@ function InterstitialVisual({ visual }: { visual: InterstitialStep["visual"] }) 
     );
   }
 
-  if (visual === "gauge") {
-    return <ScoreGauge score={animated ? 80 : 0} size={96} />;
+  if (step.visual === "gauge") {
+    return <ScoreGauge score={animated ? (step.gaugeValue ?? 80) : 0} size={96} />;
   }
 
   return (
     <div className="flex w-full max-w-[220px] flex-col gap-3">
-      {[
-        { label: "Avant 45 ans", target: 45 },
-        { label: "Après 45 ans", target: 85 },
-      ].map((bar) => (
+      {(step.bars ?? []).map((bar) => (
         <div key={bar.label} className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">{bar.label}</span>
           <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
@@ -261,11 +410,20 @@ export function OnboardingFlow() {
   const questionNumber = STEPS.slice(0, stepIndex + 1).filter((s) => s.kind !== "interstitial").length;
 
   const currentValue = step.kind !== "interstitial" ? data[step.key] : "";
+  const selectedValues = step.kind === "multi" ? currentValue.split(",").filter(Boolean) : [];
   const canProceed = step.kind === "interstitial" || !step.required || currentValue.length > 0;
 
   function updateValue(value: string) {
     if (step.kind === "interstitial") return;
     setData((prev) => ({ ...prev, [step.key]: value }));
+  }
+
+  function toggleMultiValue(value: string) {
+    if (step.kind !== "multi") return;
+    const next = selectedValues.includes(value)
+      ? selectedValues.filter((v) => v !== value)
+      : [...selectedValues, value];
+    updateValue(next.join(","));
   }
 
   function goNext() {
@@ -311,7 +469,7 @@ export function OnboardingFlow() {
       {step.kind === "interstitial" ? (
         <AnimatedIn key={stepIndex}>
           <div className="flex flex-1 flex-col items-center justify-center gap-6 py-10 text-center">
-            <InterstitialVisual visual={step.visual} />
+            <InterstitialVisual step={step} />
             <div>
               <h1 className="font-heading text-2xl font-medium leading-snug">{step.headline}</h1>
               <p className="mt-3 text-muted-foreground">{step.body}</p>
@@ -351,6 +509,35 @@ export function OnboardingFlow() {
                       ) : (
                         <span className="h-6 w-6 shrink-0 rounded-full border-2 border-border" />
                       )}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : step.kind === "multi" ? (
+              <div className="flex flex-col gap-3">
+                {step.options.map((opt) => {
+                  const selected = selectedValues.includes(opt.value);
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => toggleMultiValue(opt.value)}
+                      className={cn(
+                        "flex min-h-14 items-center justify-between rounded-xl border-2 px-4 py-3 text-left text-base font-medium transition-colors",
+                        selected
+                          ? "border-primary bg-primary/5 text-foreground"
+                          : "border-border bg-card text-foreground hover:border-primary/40"
+                      )}
+                    >
+                      {opt.label}
+                      <span
+                        className={cn(
+                          "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2",
+                          selected ? "border-primary bg-primary text-primary-foreground" : "border-border"
+                        )}
+                      >
+                        {selected && <Check className="h-4 w-4" />}
+                      </span>
                     </button>
                   );
                 })}
