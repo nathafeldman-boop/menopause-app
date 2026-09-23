@@ -4,6 +4,7 @@ import { APP_NAME } from "@/lib/brand";
 
 const LEGAL_LINKS = [
   { href: "/mentions-legales", label: "Mentions légales" },
+  { href: "/cgv", label: "CGV" },
   { href: "/confidentialite", label: "Confidentialité" },
   { href: "/contact", label: "Contact" },
 ];

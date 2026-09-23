@@ -3,10 +3,11 @@ import { Sparkles } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { APP_NAME } from "@/lib/brand";
 
 export function PaywallPrompt({
   title = "Passez à l'accompagnement complet",
-  description = "Cette fonctionnalité fait partie de votre accompagnement Alma. Abonnez-vous pour y accéder dès maintenant.",
+  description = `Cette fonctionnalité fait partie de votre accompagnement ${APP_NAME}. Abonnez-vous pour y accéder dès maintenant.`,
 }: {
   title?: string;
   description?: string;

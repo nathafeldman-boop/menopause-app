@@ -8,6 +8,7 @@ import { generateWeeklyPlanForUser } from "@/lib/meal-plan";
 import { MealPlanView } from "@/components/meal-plan/meal-plan-view";
 import { RegeneratePlanButton } from "@/components/meal-plan/regenerate-plan-button";
 import { PaywallPrompt } from "@/components/billing/paywall-prompt";
+import { APP_NAME } from "@/lib/brand";
 import type { DayPlan } from "@/lib/ai/types";
 
 export const metadata: Metadata = { title: "Mon plan de la semaine" };
@@ -54,7 +55,7 @@ export default async function PlanPage() {
         ) : (
           <PaywallPrompt
             title="Débloquez votre programme complet"
-            description="Les 7 jours de la semaine font partie de votre accompagnement Alma."
+            description={`Les 7 jours de la semaine font partie de votre accompagnement ${APP_NAME}.`}
           />
         ))}
     </div>

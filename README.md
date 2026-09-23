@@ -1,4 +1,4 @@
-# Alma — coach alimentaire pour la ménopause
+# MenoStart — coach alimentaire pour la ménopause
 
 MVP SaaS B2C : web app Next.js (App Router) + Supabase (auth, base de données, stockage) +
 Google Gemini (analyse photo et coach IA).

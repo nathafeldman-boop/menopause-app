@@ -3,10 +3,11 @@ import { Lock } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { APP_NAME } from "@/lib/brand";
 
 export function LockedContent({
   label,
-  description = "Débloquez la suite avec votre abonnement Alma.",
+  description = `Débloquez la suite avec votre abonnement ${APP_NAME}.`,
   lines = 3,
   showCta = true,
 }: {

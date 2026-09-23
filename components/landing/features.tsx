@@ -1,6 +1,7 @@
 import { Camera, ChefHat, Refrigerator, MessageCircle } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { APP_NAME } from "@/lib/brand";
 
 const FEATURES = [
   {
@@ -28,7 +29,7 @@ const FEATURES = [
 export function Features() {
   return (
     <section className="mx-auto max-w-2xl px-5 py-16">
-      <h2 className="mb-8 font-heading text-3xl font-medium">Tout ce qu&apos;Alma fait pour vous</h2>
+      <h2 className="mb-8 font-heading text-3xl font-medium">Tout ce que {APP_NAME} fait pour vous</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {FEATURES.map(({ icon: Icon, title, description }) => (
           <Card key={title}>

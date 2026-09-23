@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { hasActiveSubscription } from "@/lib/subscription";
 import { CoachChat } from "@/components/coach/coach-chat";
 import { PaywallPrompt } from "@/components/billing/paywall-prompt";
+import { APP_NAME } from "@/lib/brand";
 
 export const metadata: Metadata = { title: "Mon coach" };
 
@@ -26,7 +27,7 @@ export default async function CoachPage() {
         </div>
         <PaywallPrompt
           title="Débloquez votre coach personnel"
-          description="Le coach IA fait partie de votre accompagnement Alma. Abonnez-vous pour lui poser vos questions à tout moment."
+          description={`Le coach IA fait partie de votre accompagnement ${APP_NAME}. Abonnez-vous pour lui poser vos questions à tout moment.`}
         />
       </div>
     );

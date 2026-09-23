@@ -13,6 +13,7 @@ import { AdaptRecipeButton } from "@/components/recipe/adapt-recipe-button";
 import { PaywallPrompt } from "@/components/billing/paywall-prompt";
 import { LockedContent } from "@/components/billing/locked-content";
 import { getFitScoreLabel } from "@/lib/score";
+import { APP_NAME } from "@/lib/brand";
 import type { AdaptedIngredient } from "@/lib/ai/types";
 
 export const metadata: Metadata = { title: "Votre recette" };
@@ -119,7 +120,7 @@ export default async function RecipeResultPage({ params }: { params: Promise<{ i
         (!subscribed ? (
           <PaywallPrompt
             title="Adaptez cette recette"
-            description="L'adaptation de recette fait partie de votre accompagnement Alma."
+            description={`L'adaptation de recette fait partie de votre accompagnement ${APP_NAME}.`}
           />
         ) : recipe.is_teaser ? (
           <Button asChild size="lg" variant="outline">

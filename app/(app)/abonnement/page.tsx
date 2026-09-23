@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { Camera, ChefHat, Refrigerator, MessageCircle, History, Check } from "lucide-react";
 
@@ -88,7 +89,11 @@ export default async function AbonnementPage() {
         </p>
         <p>
           Vous pouvez annuler ou changer de formule à tout moment. Nous ne stockons jamais vos
-          données bancaires.
+          données bancaires. Voir nos{" "}
+          <Link href="/cgv" className="text-primary underline underline-offset-4">
+            conditions générales de vente
+          </Link>
+          .
         </p>
       </div>
     </div>

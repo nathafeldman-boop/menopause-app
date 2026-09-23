@@ -4,19 +4,20 @@ import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { APP_NAME } from "@/lib/brand";
 
 const FAQS = [
   {
-    q: "Alma remplace-t-elle un médecin ou une diététicienne ?",
-    a: "Non. Alma propose des conseils alimentaires généraux et prudents. Elle ne diagnostique aucune maladie et ne remplace pas l'avis d'un professionnel de santé, notamment en cas de douleur ou de symptôme.",
+    q: `${APP_NAME} remplace-t-elle un médecin ou une diététicienne ?`,
+    a: `Non. ${APP_NAME} propose des conseils alimentaires généraux et prudents. Elle ne diagnostique aucune maladie et ne remplace pas l'avis d'un professionnel de santé, notamment en cas de douleur ou de symptôme.`,
   },
   {
     q: "L'analyse de repas donne-t-elle des calories exactes ?",
-    a: "Non, et c'est volontaire. Une photo ne permet pas de connaître précisément les quantités. Alma reste honnête : elle donne un équilibre général et des conseils qualitatifs plutôt que d'inventer des chiffres.",
+    a: `Non, et c'est volontaire. Une photo ne permet pas de connaître précisément les quantités. ${APP_NAME} reste honnête : elle donne un équilibre général et des conseils qualitatifs plutôt que d'inventer des chiffres.`,
   },
   {
     q: "Est-ce que je vais perdre du poids ?",
-    a: "Alma vous aide à mieux structurer votre alimentation au quotidien. Nous ne promettons aucun résultat de perte de poids précis ou garanti : chaque parcours est différent.",
+    a: `${APP_NAME} vous aide à mieux structurer votre alimentation au quotidien. Nous ne promettons aucun résultat de perte de poids précis ou garanti : chaque parcours est différent.`,
   },
   {
     q: "Puis-je annuler à tout moment ?",

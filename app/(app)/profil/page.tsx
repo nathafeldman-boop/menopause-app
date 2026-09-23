@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/actions/auth";
+import { APP_NAME } from "@/lib/brand";
 
 export const metadata: Metadata = { title: "Mon profil" };
 
@@ -190,9 +191,9 @@ export default async function ProfilePage() {
       </Card>
 
       <p className="text-xs leading-relaxed text-muted-foreground">
-        Alma propose des conseils alimentaires généraux et ne remplace pas l&apos;avis d&apos;un
-        professionnel de santé. En cas de doute, de douleur ou de symptôme préoccupant, consultez
-        votre médecin.
+        {APP_NAME} propose des conseils alimentaires généraux et ne remplace pas l&apos;avis
+        d&apos;un professionnel de santé. En cas de doute, de douleur ou de symptôme préoccupant,
+        consultez votre médecin.
       </p>
 
       <form action={signOutAction}>

@@ -5,7 +5,7 @@ import { APP_NAME } from "@/lib/brand";
 
 export const metadata: Metadata = { title: "Contact" };
 
-const CONTACT_EMAIL = "contact@alma-app.fr";
+const CONTACT_EMAIL = "marcnatha56@gmail.com";
 
 export default function ContactPage() {
   return (

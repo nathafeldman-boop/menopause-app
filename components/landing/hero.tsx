@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { ScoreGauge } from "@/components/meal/score-gauge";
+import { APP_NAME } from "@/lib/brand";
 
 export function Hero() {
   return (
@@ -17,7 +18,7 @@ export function Hero() {
             <em className="text-primary italic">sans régime compliqué.</em>
           </h1>
           <p className="text-lg leading-relaxed text-muted-foreground">
-            Photographiez votre assiette. Alma vous dit ce qui est déjà bien et ce que vous
+            Photographiez votre assiette. {APP_NAME} vous dit ce qui est déjà bien et ce que vous
             pourriez ajouter, simplement.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">

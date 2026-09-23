@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { ScoreGauge } from "@/components/meal/score-gauge";
+import { APP_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 type ChoiceStep = {
@@ -233,7 +234,7 @@ const STEPS: Step[] = [
   {
     kind: "interstitial",
     headline: "Ça fait la différence",
-    body: "8 utilisatrices sur 10 se sentent plus sereines face à leurs repas après 2 semaines avec Alma.",
+    body: `8 utilisatrices sur 10 se sentent plus sereines face à leurs repas après 2 semaines avec ${APP_NAME}.`,
     visual: "gauge",
     gaugeValue: 80,
   },
@@ -273,7 +274,7 @@ const STEPS: Step[] = [
   {
     kind: "interstitial",
     headline: "Vous êtes prête",
-    body: "9 utilisatrices sur 10 se sentent mieux accompagnées dès la première semaine avec Alma.",
+    body: `9 utilisatrices sur 10 se sentent mieux accompagnées dès la première semaine avec ${APP_NAME}.`,
     visual: "gauge",
     gaugeValue: 90,
   },

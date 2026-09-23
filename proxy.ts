@@ -10,6 +10,7 @@ const PUBLIC_PATHS = [
   "/mentions-legales",
   "/confidentialite",
   "/contact",
+  "/cgv",
 ];
 
 export async function proxy(request: NextRequest) {

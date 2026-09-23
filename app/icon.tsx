@@ -20,7 +20,7 @@ export default function Icon() {
           fontSize: 20,
         }}
       >
-        A
+        M
       </div>
     ),
     { ...size }
