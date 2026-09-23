@@ -29,7 +29,7 @@ export function Features() {
   return (
     <section className="mx-auto max-w-2xl px-5 py-16">
       <h2 className="mb-8 font-heading text-3xl font-medium">Tout ce qu&apos;Alma fait pour vous</h2>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {FEATURES.map(({ icon: Icon, title, description }) => (
           <Card key={title}>
             <CardContent className="flex flex-col gap-3 p-5">

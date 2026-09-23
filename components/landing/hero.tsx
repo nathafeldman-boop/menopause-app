@@ -7,7 +7,7 @@ import { ScoreGauge } from "@/components/meal/score-gauge";
 export function Hero() {
   return (
     <section className="mx-auto max-w-5xl px-5 pb-16 pt-10 sm:pt-16">
-      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+      <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <div className="flex flex-col gap-6">
           <span className="w-fit rounded-full border border-border bg-card px-3.5 py-1.5 text-sm text-muted-foreground">
             Coach alimentaire · Ménopause

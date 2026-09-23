@@ -14,7 +14,7 @@ export function PricingSection() {
         </p>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <Card className="border-primary bg-primary/5">
           <CardContent className="flex flex-col gap-4 p-6">
             <span className="w-fit rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
