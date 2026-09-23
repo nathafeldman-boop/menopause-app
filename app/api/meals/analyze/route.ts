@@ -22,9 +22,18 @@ export async function POST(request: Request) {
 
   const formData = await request.formData();
   const file = formData.get("photo");
+  const mealDateRaw = formData.get("mealDate");
 
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "Aucune photo reçue." }, { status: 400 });
+  }
+
+  let mealDate: string | undefined;
+  if (typeof mealDateRaw === "string" && mealDateRaw) {
+    const parsed = new Date(mealDateRaw);
+    if (!Number.isNaN(parsed.getTime()) && parsed.getTime() <= Date.now()) {
+      mealDate = parsed.toISOString();
+    }
   }
 
   try {
@@ -54,6 +63,7 @@ export async function POST(request: Request) {
       .insert({
         user_id: user.id,
         image_path: path,
+        ...(mealDate ? { created_at: mealDate } : {}),
         meal_name: analysis.mealName || null,
         score: analysis.score,
         protein_flag: analysis.proteinFlag,
