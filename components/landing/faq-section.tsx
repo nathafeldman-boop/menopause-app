@@ -1,3 +1,10 @@
+"use client";
+
+import { useState } from "react";
+import { Plus, Minus } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
 const FAQS = [
   {
     q: "Alma remplace-t-elle un médecin ou une diététicienne ?",
@@ -22,16 +29,43 @@ const FAQS = [
 ];
 
 export function FaqSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
   return (
     <section className="mx-auto max-w-3xl px-5 py-16">
       <h2 className="mb-8 text-center font-heading text-3xl font-medium">Questions fréquentes</h2>
-      <div className="flex flex-col divide-y divide-border">
-        {FAQS.map(({ q, a }) => (
-          <div key={q} className="py-5">
-            <p className="font-medium">{q}</p>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{a}</p>
-          </div>
-        ))}
+      <div className="flex flex-col gap-3">
+        {FAQS.map(({ q, a }, i) => {
+          const open = openIndex === i;
+          return (
+            <div
+              key={q}
+              className="rounded-2xl border border-border bg-card"
+            >
+              <button
+                type="button"
+                onClick={() => setOpenIndex(open ? null : i)}
+                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                aria-expanded={open}
+              >
+                <span className="font-medium">{q}</span>
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+                  {open ? <Minus className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+                </span>
+              </button>
+              <div
+                className={cn(
+                  "grid transition-all duration-200 ease-in-out",
+                  open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                )}
+              >
+                <div className="overflow-hidden">
+                  <p className="px-5 pb-4 text-sm leading-relaxed text-muted-foreground">{a}</p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
