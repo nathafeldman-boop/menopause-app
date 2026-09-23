@@ -78,6 +78,7 @@ export const mockProvider: AiProvider = {
     await fakeDelay();
     return {
       title: `${recipe.title} — version adaptée`,
+      fitScore: Math.min(100, recipe.fitScore + 14),
       ingredients: [
         ...recipe.ingredients.map((text) => ({ text, note: "", isNew: false })),
         { text: "1 poignée d'amandes effilées (source de calcium)", note: "", isNew: true },

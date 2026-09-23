@@ -102,7 +102,7 @@ ${profileContextBlock(profile)}
 
 Adapte cette recette pour mieux correspondre au profil et aux objectifs de l'utilisatrice (ex : plus de fibres, une source de calcium, moins de sucre ajouté, respect des allergies/aversions listées), sans dénaturer le plat.
 
-Donne la version adaptée complète : titre, étapes, et surtout la liste COMPLÈTE des ingrédients de la version adaptée (y compris ceux qui n'ont pas changé), où pour chaque ingrédient modifié tu précises dans "note" ce qui a changé par rapport à l'original (ex: "au lieu de 3"), et où chaque ingrédient totalement nouveau a isNew à true. Les ingrédients inchangés ont note à "" et isNew à false. Ajoute aussi une liste courte ("whatChanged") résumant les changements et pourquoi.`;
+Donne la version adaptée complète : titre, un nouveau score d'adéquation (0-100) reflétant l'amélioration apportée par ces changements (normalement supérieur au score original de ${recipe.fitScore}, sans exagérer), étapes, et surtout la liste COMPLÈTE des ingrédients de la version adaptée (y compris ceux qui n'ont pas changé), où pour chaque ingrédient modifié tu précises dans "note" ce qui a changé par rapport à l'original (ex: "au lieu de 3"), et où chaque ingrédient totalement nouveau a isNew à true. Les ingrédients inchangés ont note à "" et isNew à false. Ajoute aussi une liste courte ("whatChanged") résumant les changements et pourquoi.`;
 
     return generateJson<AdaptedRecipe>({ prompt, schema: adaptedRecipeSchema });
   },

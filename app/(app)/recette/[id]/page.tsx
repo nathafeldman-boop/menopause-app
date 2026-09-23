@@ -18,6 +18,7 @@ export const metadata: Metadata = { title: "Votre recette" };
 type Extracted = { ingredients?: string[]; steps?: string[]; servings?: string; time?: string };
 type Adapted = {
   title?: string;
+  fitScore?: number;
   ingredients?: AdaptedIngredient[];
   steps?: string[];
   whatChanged?: string[];
@@ -117,14 +118,16 @@ export default async function RecipeResultPage({ params }: { params: Promise<{ i
     </div>
   );
 
+  const adaptedFitScore = adapted?.fitScore ?? fitScore;
+
   const adaptedView = adapted ? (
     <div className="flex flex-col gap-6">
       <Card className="border-primary/30 bg-primary/5">
         <CardContent className="flex items-center gap-4 p-5">
-          <ScoreGauge score={fitScore} />
+          <ScoreGauge score={adaptedFitScore} />
           <div>
             <p className="font-heading text-lg font-medium leading-tight">
-              {getFitScoreLabel(fitScore)}
+              {getFitScoreLabel(adaptedFitScore)}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               Version originale : {fitScore}/100

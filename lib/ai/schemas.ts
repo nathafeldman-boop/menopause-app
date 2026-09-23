@@ -61,6 +61,13 @@ export const adaptedRecipeSchema = {
   type: "object",
   properties: {
     title: { type: "string" },
+    fitScore: {
+      type: "integer",
+      minimum: 0,
+      maximum: 100,
+      description:
+        "Adéquation de la VERSION ADAPTÉE avec le profil utilisatrice, généralement supérieure au score de la recette originale",
+    },
     ingredients: {
       type: "array",
       description: "Liste complète des ingrédients de la version adaptée",
@@ -80,7 +87,7 @@ export const adaptedRecipeSchema = {
     steps: { type: "array", items: { type: "string" } },
     whatChanged: { type: "array", items: { type: "string" }, description: "Liste courte de ce qui a été adapté et pourquoi" },
   },
-  required: ["title", "ingredients", "steps", "whatChanged"],
+  required: ["title", "fitScore", "ingredients", "steps", "whatChanged"],
 };
 
 export const ingredientRecipesSchema = {

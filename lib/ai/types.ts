@@ -36,6 +36,7 @@ export type AdaptedIngredient = {
 
 export type AdaptedRecipe = {
   title: string;
+  fitScore: number; // 0-100, adéquation de la version adaptée (généralement > fitScore original)
   ingredients: AdaptedIngredient[];
   steps: string[];
   whatChanged: string[];

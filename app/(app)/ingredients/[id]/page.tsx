@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import type { Metadata } from "next";
+import { ArrowLeft } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { RecipeCard } from "@/components/ingredients/recipe-card";
@@ -26,6 +28,12 @@ export default async function IngredientRecipesPage({
 
   return (
     <div className="flex flex-col gap-6">
+      <Link
+        href="/ingredients"
+        className="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" /> Retour
+      </Link>
       <div>
         <h1 className="font-heading text-2xl font-medium">Vos recettes</h1>
         <p className="mt-1 text-muted-foreground">À partir de : {row.ingredients_input.join(", ")}</p>
