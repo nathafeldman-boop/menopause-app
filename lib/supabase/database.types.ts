@@ -68,33 +68,6 @@ export type Database = {
           },
         ]
       }
-      credit_transactions: {
-        Row: {
-          amount: number
-          created_at: string
-          id: string
-          reason: string
-          related_id: string | null
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          id?: string
-          reason: string
-          related_id?: string | null
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          id?: string
-          reason?: string
-          related_id?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
       ingredient_recipes: {
         Row: {
           created_at: string
@@ -180,7 +153,6 @@ export type Database = {
         Row: {
           allergies: string | null
           created_at: string
-          credits_balance: number
           diet_type: string | null
           disliked_foods: string | null
           email: string | null
@@ -195,7 +167,6 @@ export type Database = {
         Insert: {
           allergies?: string | null
           created_at?: string
-          credits_balance?: number
           diet_type?: string | null
           disliked_foods?: string | null
           email?: string | null
@@ -210,7 +181,6 @@ export type Database = {
         Update: {
           allergies?: string | null
           created_at?: string
-          credits_balance?: number
           diet_type?: string | null
           disliked_foods?: string | null
           email?: string | null
@@ -307,14 +277,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      spend_credits: {
-        Args: { p_cost: number; p_reason: string; p_related_id?: string }
-        Returns: number
-      }
-      refund_credits: {
-        Args: { p_amount: number; p_reason: string; p_related_id?: string }
-        Returns: number
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

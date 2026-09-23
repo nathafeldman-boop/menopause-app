@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile, toAiContext } from "@/lib/profile";
 import { ai } from "@/lib/ai";
-import { spendCredits, refundCredits, InsufficientCreditsError } from "@/lib/credits";
+import { hasActiveSubscription } from "@/lib/subscription";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -13,6 +13,10 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  if (!(await hasActiveSubscription(supabase, user.id))) {
+    return NextResponse.json({ error: "subscription_required" }, { status: 402 });
   }
 
   const formData = await request.formData();
@@ -31,16 +35,6 @@ export async function POST(request: Request) {
   const hasPhoto = photo instanceof File;
   if (ingredients.length === 0 && !hasPhoto) {
     return NextResponse.json({ error: "Ajoutez au moins un ingrédient ou une photo." }, { status: 400 });
-  }
-
-  let newBalance: number;
-  try {
-    newBalance = await spendCredits(supabase, "ingredients_recipe");
-  } catch (err) {
-    if (err instanceof InsufficientCreditsError) {
-      return NextResponse.json({ error: "insufficient_credits" }, { status: 402 });
-    }
-    throw err;
   }
 
   try {
@@ -65,10 +59,9 @@ export async function POST(request: Request) {
 
     if (insertError) throw insertError;
 
-    return NextResponse.json({ id: row.id, creditsBalance: newBalance });
+    return NextResponse.json({ id: row.id });
   } catch (err) {
     console.error("[api/recipes/from-ingredients]", err);
-    await refundCredits(supabase, "ingredients_recipe").catch(() => {});
     return NextResponse.json({ error: "generation_failed" }, { status: 500 });
   }
 }

@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import { Sparkles } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
+import { hasActiveSubscription } from "@/lib/subscription";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScoreGauge } from "@/components/meal/score-gauge";
 import { AdaptRecipeButton } from "@/components/recipe/adapt-recipe-button";
+import { PaywallPrompt } from "@/components/billing/paywall-prompt";
 
 export const metadata: Metadata = { title: "Votre recette" };
 
@@ -15,9 +17,14 @@ type Adapted = { title?: string; ingredients?: string[]; steps?: string[]; whatC
 export default async function RecipeResultPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const { data: recipe } = await supabase.from("recipe_scans").select("*").eq("id", id).single();
 
   if (!recipe) notFound();
+
+  const subscribed = await hasActiveSubscription(supabase, user!.id);
 
   const extracted = (recipe.extracted ?? {}) as Extracted;
   const adapted = recipe.adapted as Adapted | null;
@@ -103,7 +110,14 @@ export default async function RecipeResultPage({ params }: { params: Promise<{ i
       </Card>
 
       {!adapted ? (
-        <AdaptRecipeButton recipeId={recipe.id} />
+        subscribed ? (
+          <AdaptRecipeButton recipeId={recipe.id} />
+        ) : (
+          <PaywallPrompt
+            title="Adaptez cette recette"
+            description="L'adaptation de recette fait partie de votre accompagnement Alma."
+          />
+        )
       ) : (
         <Card className="border-primary/30 bg-primary/5">
           <CardContent className="p-5">

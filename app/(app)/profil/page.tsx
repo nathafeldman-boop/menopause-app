@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/profile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/actions/auth";
 
@@ -28,6 +29,13 @@ export default async function ProfilePage() {
     data: { user },
   } = await supabase.auth.getUser();
   const profile = await getProfile(supabase, user!.id);
+
+  const { data: subscription } = await supabase
+    .from("subscriptions")
+    .select("plan, status")
+    .eq("user_id", user!.id)
+    .single();
+  const isActive = subscription?.status === "active";
 
   return (
     <div className="flex flex-col gap-6">
@@ -58,12 +66,20 @@ export default async function ProfilePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Abonnement &amp; crédits</CardTitle>
+          <CardTitle>Abonnement</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-muted-foreground">Solde actuel</p>
-            <p className="font-heading text-xl font-medium">{profile?.credits_balance ?? 0} crédits</p>
+            <p className="text-sm text-muted-foreground">Statut</p>
+            <div className="mt-1">
+              {isActive ? (
+                <Badge variant="success">
+                  Actif — formule {subscription?.plan === "monthly" ? "mensuelle" : "hebdomadaire"}
+                </Badge>
+              ) : (
+                <Badge>Aucun abonnement actif</Badge>
+              )}
+            </div>
           </div>
           <Button asChild variant="outline" size="sm">
             <a href="/abonnement">Gérer</a>

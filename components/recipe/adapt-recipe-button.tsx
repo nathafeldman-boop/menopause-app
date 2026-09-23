@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { SubscriptionRequiredBanner } from "@/components/billing/subscription-required-banner";
 
 export function AdaptRecipeButton({ recipeId }: { recipeId: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [insufficientCredits, setInsufficientCredits] = useState(false);
+  const [subscriptionRequired, setSubscriptionRequired] = useState(false);
 
   async function handleClick() {
     setLoading(true);
     setError(null);
-    setInsufficientCredits(false);
+    setSubscriptionRequired(false);
 
     try {
       const res = await fetch("/api/recipes/adapt", {
@@ -26,8 +26,8 @@ export function AdaptRecipeButton({ recipeId }: { recipeId: string }) {
       const data = await res.json();
 
       if (!res.ok) {
-        if (data.error === "insufficient_credits") {
-          setInsufficientCredits(true);
+        if (data.error === "subscription_required") {
+          setSubscriptionRequired(true);
         } else {
           setError("Une erreur est survenue. Merci de réessayer.");
         }
@@ -45,16 +45,9 @@ export function AdaptRecipeButton({ recipeId }: { recipeId: string }) {
   return (
     <div className="flex flex-col gap-2">
       <Button onClick={handleClick} disabled={loading} size="lg">
-        {loading ? "Adaptation en cours…" : "Adapter cette recette pour moi (5 crédits)"}
+        {loading ? "Adaptation en cours…" : "Adapter cette recette pour moi"}
       </Button>
-      {insufficientCredits && (
-        <p className="text-sm text-warning">
-          Solde insuffisant.{" "}
-          <Link href="/abonnement" className="underline underline-offset-4">
-            Voir les options
-          </Link>
-        </p>
-      )}
+      {subscriptionRequired && <SubscriptionRequiredBanner />}
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );

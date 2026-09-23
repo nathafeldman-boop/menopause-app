@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
 
+import { createClient } from "@/lib/supabase/server";
+import { hasActiveSubscription } from "@/lib/subscription";
 import { RecipeCaptureForm } from "@/components/recipe/recipe-capture-form";
+import { PaywallPrompt } from "@/components/billing/paywall-prompt";
 
 export const metadata: Metadata = { title: "Scanner une recette" };
 
-export default function RecipeScannerPage() {
+export default async function RecipeScannerPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const subscribed = await hasActiveSubscription(supabase, user!.id);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -13,7 +22,7 @@ export default function RecipeScannerPage() {
           Photo, capture d&apos;écran ou page de livre : nous lisons la recette pour vous.
         </p>
       </div>
-      <RecipeCaptureForm />
+      {subscribed ? <RecipeCaptureForm /> : <PaywallPrompt />}
     </div>
   );
 }

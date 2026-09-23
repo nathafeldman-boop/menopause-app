@@ -2,7 +2,6 @@
 
 import { useState, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { X } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -10,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PhotoPicker } from "@/components/photo/photo-picker";
+import { SubscriptionRequiredBanner } from "@/components/billing/subscription-required-banner";
 
 export function IngredientsForm() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export function IngredientsForm() {
   const [photo, setPhoto] = useState<Blob | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [insufficientCredits, setInsufficientCredits] = useState(false);
+  const [subscriptionRequired, setSubscriptionRequired] = useState(false);
 
   function commitChipsFromInput() {
     const parts = inputValue
@@ -58,7 +58,7 @@ export function IngredientsForm() {
 
     setIsSubmitting(true);
     setError(null);
-    setInsufficientCredits(false);
+    setSubscriptionRequired(false);
 
     const formData = new FormData();
     if (finalChips.length > 0) formData.append("ingredients", JSON.stringify(finalChips));
@@ -69,8 +69,8 @@ export function IngredientsForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        if (data.error === "insufficient_credits") {
-          setInsufficientCredits(true);
+        if (data.error === "subscription_required") {
+          setSubscriptionRequired(true);
         } else {
           setError(data.error || "Une erreur est survenue. Merci de réessayer.");
         }
@@ -130,21 +130,11 @@ export function IngredientsForm() {
         </TabsContent>
       </Tabs>
 
-      {insufficientCredits && (
-        <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-sm">
-          <p className="font-medium">Vous n&apos;avez plus assez de crédits.</p>
-          <p className="mt-1 text-muted-foreground">
-            <Link href="/abonnement" className="text-primary underline underline-offset-4">
-              Voir les options
-            </Link>{" "}
-            pour continuer votre accompagnement.
-          </p>
-        </div>
-      )}
+      {subscriptionRequired && <SubscriptionRequiredBanner />}
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       <Button size="lg" onClick={handleSubmit} disabled={isSubmitting}>
-        {isSubmitting ? "Recherche de recettes…" : "Trouver 3 recettes (5 crédits)"}
+        {isSubmitting ? "Recherche de recettes…" : "Trouver 3 recettes"}
       </Button>
     </div>
   );

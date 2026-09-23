@@ -26,8 +26,7 @@ export function PricingSection() {
               <span className="text-muted-foreground"> {PLANS.monthly.period}</span>
             </p>
             <p className="text-sm text-muted-foreground">
-              {PLANS.monthly.credits} crédits inclus chaque mois — analyse de repas, recettes,
-              coach IA.
+              Accès complet : analyse de repas, recettes, coach IA.
             </p>
             <Button asChild size="lg">
               <Link href="/signup">Commencer mon accompagnement</Link>
@@ -43,7 +42,7 @@ export function PricingSection() {
               <span className="text-muted-foreground"> {PLANS.weekly.period}</span>
             </p>
             <p className="text-sm text-muted-foreground">
-              {PLANS.weekly.credits} crédits inclus chaque semaine — idéal pour essayer.
+              Accès complet, idéal pour essayer.
             </p>
             <Button asChild variant="outline" size="lg">
               <Link href="/signup">Essayer l&apos;hebdomadaire</Link>

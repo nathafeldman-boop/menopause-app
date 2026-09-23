@@ -31,8 +31,8 @@ Voir `.env.example` pour la liste complète. Points importants :
   (photos privées)
 - IA : Google Gemini (`lib/ai/gemini.ts`), avec repli automatique vers un mode simulé
   (`lib/ai/mock.ts`) si la clé est absente ou si un appel échoue
-- Système de crédits : `lib/credits.ts` + fonctions Postgres `spend_credits` / `refund_credits`
-  (débit/crédit atomiques)
+- Accès aux fonctionnalités IA conditionné à un abonnement actif (`lib/subscription.ts`) —
+  pas de système de crédits
 
 ## Ce qui reste à faire avant un vrai lancement payant
 

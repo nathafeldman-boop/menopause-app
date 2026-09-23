@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
 
+import { createClient } from "@/lib/supabase/server";
+import { hasActiveSubscription } from "@/lib/subscription";
 import { MealCaptureForm } from "@/components/meal/meal-capture-form";
+import { PaywallPrompt } from "@/components/billing/paywall-prompt";
 
 export const metadata: Metadata = { title: "Photographier mon repas" };
 
-export default function NewMealPage() {
+export default async function NewMealPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const subscribed = await hasActiveSubscription(supabase, user!.id);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -14,7 +23,7 @@ export default function NewMealPage() {
           concrets.
         </p>
       </div>
-      <MealCaptureForm />
+      {subscribed ? <MealCaptureForm /> : <PaywallPrompt />}
     </div>
   );
 }

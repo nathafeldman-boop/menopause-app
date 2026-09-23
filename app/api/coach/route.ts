@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProfile, toAiContext } from "@/lib/profile";
 import { ai } from "@/lib/ai";
 import type { CoachMessage } from "@/lib/ai/types";
+import { hasActiveSubscription } from "@/lib/subscription";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -13,6 +14,10 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  if (!(await hasActiveSubscription(supabase, user.id))) {
+    return NextResponse.json({ error: "subscription_required" }, { status: 402 });
   }
 
   const body = await request.json().catch(() => null);

@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
 
+import { createClient } from "@/lib/supabase/server";
+import { hasActiveSubscription } from "@/lib/subscription";
 import { IngredientsForm } from "@/components/ingredients/ingredients-form";
+import { PaywallPrompt } from "@/components/billing/paywall-prompt";
 
 export const metadata: Metadata = { title: "Recettes avec mes ingrédients" };
 
-export default function IngredientsPage() {
+export default async function IngredientsPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const subscribed = await hasActiveSubscription(supabase, user!.id);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -13,7 +22,7 @@ export default function IngredientsPage() {
           Listez ou photographiez ce que vous avez, nous vous proposons 3 recettes adaptées.
         </p>
       </div>
-      <IngredientsForm />
+      {subscribed ? <IngredientsForm /> : <PaywallPrompt />}
     </div>
   );
 }
