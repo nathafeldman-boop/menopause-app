@@ -71,9 +71,10 @@ export function CoachChat({
 
       <div className="flex flex-col gap-3">
         {messages.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            Posez-moi une question, ou choisissez une suggestion ci-dessous.
-          </p>
+          <div className="max-w-[85%] self-start rounded-2xl bg-muted px-4 py-3 text-sm leading-relaxed text-foreground">
+            Bonjour ! Une envie, une question sur un repas ? Choisissez une suggestion ou
+            écrivez-moi.
+          </div>
         )}
         {messages.map((m) => (
           <div

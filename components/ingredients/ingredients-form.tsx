@@ -105,7 +105,7 @@ export function IngredientsForm() {
             {chips.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {chips.map((chip, i) => (
-                  <Badge key={i} variant="primary" className="pr-1.5">
+                  <Badge key={i} variant="default" className="pr-1.5">
                     {chip}
                     <button type="button" onClick={() => removeChip(i)} aria-label={`Retirer ${chip}`}>
                       <X className="h-3.5 w-3.5" />

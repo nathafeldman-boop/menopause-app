@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Camera, ChefHat, Refrigerator, MessageCircle } from "lucide-react";
+import { Camera, ChefHat, Refrigerator, MessageCircle, Image as ImageIcon, ChevronRight } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,27 +32,33 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <Link href="/repas/nouveau">
-        <Card className="border-primary/30 bg-primary/5 transition-colors hover:bg-primary/10">
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              <Camera className="h-7 w-7" />
-            </div>
-            <div>
-              <p className="font-heading text-lg font-medium">Photographier mon repas</p>
-              <p className="text-sm text-muted-foreground">
-                Recevez une analyse claire et des conseils concrets.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </Link>
+      <Card>
+        <CardContent className="flex flex-col gap-4 p-5">
+          <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/60 text-muted-foreground">
+            <ImageIcon className="h-8 w-8" />
+            <p className="text-xs">Photo d&apos;ambiance : une assiette</p>
+          </div>
+          <div>
+            <p className="font-heading text-lg font-medium">Photographiez votre repas</p>
+            <p className="text-sm text-muted-foreground">
+              Une analyse claire et des conseils concrets, en quelques secondes.
+            </p>
+          </div>
+          <Button asChild size="lg">
+            <Link href="/repas/nouveau">
+              <Camera className="h-5 w-5" /> Photographier mon repas
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-2 gap-3">
         <Link href="/recette/scanner">
           <Card className="h-full transition-colors hover:bg-muted/60">
             <CardContent className="flex flex-col gap-3 p-4">
-              <ChefHat className="h-6 w-6 text-secondary" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/15 text-secondary">
+                <ChefHat className="h-5 w-5" />
+              </div>
               <p className="font-medium leading-snug">Scanner une recette</p>
             </CardContent>
           </Card>
@@ -60,7 +66,9 @@ export default async function DashboardPage() {
         <Link href="/ingredients">
           <Card className="h-full transition-colors hover:bg-muted/60">
             <CardContent className="flex flex-col gap-3 p-4">
-              <Refrigerator className="h-6 w-6 text-secondary" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/15 text-secondary">
+                <Refrigerator className="h-5 w-5" />
+              </div>
               <p className="font-medium leading-snug">Recettes avec mes ingrédients</p>
             </CardContent>
           </Card>
@@ -70,11 +78,14 @@ export default async function DashboardPage() {
       <Link href="/coach">
         <Card className="transition-colors hover:bg-muted/60">
           <CardContent className="flex items-center gap-4 p-4">
-            <MessageCircle className="h-6 w-6 text-secondary" />
-            <div>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary/15 text-secondary">
+              <MessageCircle className="h-5 w-5" />
+            </div>
+            <div className="flex-1">
               <p className="font-medium">Parler à mon coach</p>
               <p className="text-sm text-muted-foreground">Une question ? Une idée de repas ?</p>
             </div>
+            <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
           </CardContent>
         </Card>
       </Link>

@@ -5,8 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PLANS, TEST_BILLING_ENABLED } from "@/lib/billing";
-import { activateTestPlanAction, cancelTestPlanAction } from "@/lib/actions/billing";
+import { PlanSelector } from "@/components/billing/plan-selector";
+import { TEST_BILLING_ENABLED } from "@/lib/billing";
+import { cancelTestPlanAction } from "@/lib/actions/billing";
 
 export const metadata: Metadata = { title: "Mon accompagnement" };
 
@@ -31,6 +32,8 @@ export default async function AbonnementPage() {
     .single();
 
   const isActive = subscription?.status === "active";
+  const currentPlan =
+    subscription?.plan === "monthly" || subscription?.plan === "weekly" ? subscription.plan : null;
 
   return (
     <div className="flex flex-col gap-8">
@@ -69,75 +72,7 @@ export default async function AbonnementPage() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        <Card className="relative overflow-hidden border-primary bg-primary/5">
-          <div className="absolute right-0 top-0 rounded-bl-lg bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
-            Le plus populaire
-          </div>
-          <CardContent className="flex flex-col gap-4 p-6">
-            <div>
-              <p className="font-heading text-xl font-medium">{PLANS.monthly.label}</p>
-              <p className="mt-1">
-                <span className="font-heading text-3xl font-medium">{PLANS.monthly.price}</span>
-                <span className="text-muted-foreground"> {PLANS.monthly.period}</span>
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">Accès complet, sans limite</p>
-            </div>
-            {TEST_BILLING_ENABLED ? (
-              subscription?.plan === "monthly" && isActive ? (
-                <Button size="lg" className="w-full" disabled>
-                  Formule actuelle
-                </Button>
-              ) : (
-                <form action={activateTestPlanAction.bind(null, "monthly")}>
-                  <Button type="submit" size="lg" className="w-full">
-                    Commencer mon accompagnement
-                  </Button>
-                </form>
-              )
-            ) : (
-              <Button size="lg" className="w-full" disabled>
-                Bientôt disponible
-              </Button>
-            )}
-            {TEST_BILLING_ENABLED && (
-              <p className="text-center text-xs text-muted-foreground">
-                Mode test — aucun paiement n&apos;est prélevé pour le moment.
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="flex flex-col gap-4 p-6">
-            <div>
-              <p className="font-heading text-xl font-medium">{PLANS.weekly.label}</p>
-              <p className="mt-1">
-                <span className="font-heading text-3xl font-medium">{PLANS.weekly.price}</span>
-                <span className="text-muted-foreground"> {PLANS.weekly.period}</span>
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">Accès complet, sans limite</p>
-            </div>
-            {TEST_BILLING_ENABLED ? (
-              subscription?.plan === "weekly" && isActive ? (
-                <Button variant="outline" size="lg" className="w-full" disabled>
-                  Formule actuelle
-                </Button>
-              ) : (
-                <form action={activateTestPlanAction.bind(null, "weekly")}>
-                  <Button type="submit" variant="outline" size="lg" className="w-full">
-                    Choisir l&apos;hebdomadaire
-                  </Button>
-                </form>
-              )
-            ) : (
-              <Button variant="outline" size="lg" className="w-full" disabled>
-                Bientôt disponible
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+      <PlanSelector currentPlan={currentPlan} isActive={isActive} />
 
       {TEST_BILLING_ENABLED && isActive && (
         <form action={cancelTestPlanAction}>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Image as ImageIcon } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -13,9 +13,13 @@ export function RecipeCard({ recipe }: { recipe: GeneratedRecipe }) {
   return (
     <Card>
       <button type="button" onClick={() => setOpen((o) => !o)} className="w-full text-left">
-        <CardContent className="flex items-center justify-between gap-3 p-5">
-          <div>
-            <p className="font-heading text-lg font-medium">{recipe.name}</p>
+        <CardContent className="flex items-center gap-3 p-4">
+          <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-dashed border-border bg-muted/60 text-muted-foreground">
+            <ImageIcon className="h-5 w-5" />
+            <span className="text-[10px]">Photo</span>
+          </div>
+          <div className="flex-1">
+            <p className="font-heading text-lg font-medium leading-snug">{recipe.name}</p>
             <p className="mt-0.5 text-sm text-muted-foreground">{recipe.time}</p>
             <p className="mt-1 text-sm">{recipe.whyFits}</p>
           </div>
