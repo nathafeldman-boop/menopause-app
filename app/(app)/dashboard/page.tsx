@@ -12,8 +12,14 @@ import {
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
+import { getProfile } from "@/lib/profile";
+import { getTodayProgress, todayWeekdayName } from "@/lib/daily-progress";
+import { GOAL_LABELS } from "@/lib/labels";
+import { TodayPlanCard } from "@/components/dashboard/today-plan-card";
+import { CheckInCard } from "@/components/dashboard/checkin-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import type { DayPlan } from "@/lib/ai/types";
 
 export const metadata: Metadata = { title: "Accueil" };
 
@@ -26,11 +32,26 @@ export default async function DashboardPage() {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
 
-  const { count: mealsThisWeek } = await supabase
-    .from("meal_analyses")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user!.id)
-    .gte("created_at", weekAgo.toISOString());
+  const [{ count: mealsThisWeek }, profile, todayProgress, { data: plan }] = await Promise.all([
+    supabase
+      .from("meal_analyses")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user!.id)
+      .gte("created_at", weekAgo.toISOString()),
+    getProfile(supabase, user!.id),
+    getTodayProgress(supabase, user!.id),
+    supabase
+      .from("meal_plans")
+      .select("days")
+      .eq("user_id", user!.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  const days = (plan?.days ?? []) as unknown as DayPlan[];
+  const todayMeals = days.find((d) => d.day === todayWeekdayName())?.meals ?? [];
+  const goalLabel = profile?.goal ? GOAL_LABELS[profile.goal] ?? profile.goal : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -40,6 +61,10 @@ export default async function DashboardPage() {
           Qu&apos;aimeriez-vous faire aujourd&apos;hui&nbsp;?
         </p>
       </div>
+
+      <TodayPlanCard meals={todayMeals} initialDone={todayProgress.meals_done} goalLabel={goalLabel} />
+
+      <CheckInCard alreadyDone={!!todayProgress.mood} />
 
       <Card>
         <CardContent className="flex flex-col gap-4 p-5">

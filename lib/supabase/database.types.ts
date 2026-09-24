@@ -70,6 +70,39 @@ export type Database = {
           },
         ]
       }
+      daily_progress: {
+        Row: {
+          created_at: string
+          id: string
+          meals_done: string[]
+          mood: string | null
+          note: string | null
+          progress_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          meals_done?: string[]
+          mood?: string | null
+          note?: string | null
+          progress_date?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          meals_done?: string[]
+          mood?: string | null
+          note?: string | null
+          progress_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ingredient_recipes: {
         Row: {
           created_at: string

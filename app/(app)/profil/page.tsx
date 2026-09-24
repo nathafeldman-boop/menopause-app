@@ -7,16 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/actions/auth";
 import { APP_NAME } from "@/lib/brand";
+import { GOAL_LABELS } from "@/lib/labels";
 
 export const metadata: Metadata = { title: "Mon profil" };
-
-const GOAL_LABELS: Record<string, string> = {
-  eat_better: "Mieux manger",
-  lose_weight: "Perdre du poids progressivement",
-  reduce_snacking: "Réduire le grignotage",
-  structure_meals: "Mieux structurer mes repas",
-  stay_fit: "Maintenir ma forme",
-};
 
 const DIET_LABELS: Record<string, string> = {
   omnivore: "Omnivore",
