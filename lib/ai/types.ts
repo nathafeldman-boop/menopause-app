@@ -56,10 +56,23 @@ export type GeneratedRecipesResult = {
   recipes: GeneratedRecipe[];
 };
 
+export type ShoppingCategory =
+  | "fruits_legumes"
+  | "viande_poisson_oeufs"
+  | "produits_laitiers"
+  | "epicerie"
+  | "condiments";
+
+export type PlannedMealIngredient = {
+  text: string; // ex: "4 courgettes"
+  category: ShoppingCategory;
+};
+
 export type PlannedMeal = {
   type: string; // ex: "Petit-déjeuner", "Déjeuner", "Dîner"
   name: string;
   description: string; // 1 phrase
+  ingredients: PlannedMealIngredient[];
 };
 
 export type DayPlan = {
@@ -69,6 +82,13 @@ export type DayPlan = {
 
 export type WeeklyMealPlan = {
   days: DayPlan[]; // 1 jour en mode aperçu, 7 en mode complet
+};
+
+export type ShoppingListItem = {
+  id: string;
+  text: string;
+  category: ShoppingCategory;
+  checked: boolean;
 };
 
 export type UserProfileContext = {

@@ -180,7 +180,7 @@ Réponds au dernier message de l'utilisatrice en tant que coach alimentaire bien
 ${profileContextBlock(profile)}
 ${todaysMealsLine}
 
-Pour chaque repas : un type (Petit-déjeuner/Déjeuner/Dîner), un nom de plat, et une description en une phrase, sans calories ni grammes précis inventés. Varie les repas d'un jour à l'autre, reste réaliste et simple à préparer.${
+Pour chaque repas : un type (Petit-déjeuner/Déjeuner/Dîner), un nom de plat, une description en une phrase (sans calories ni grammes précis inventés), et la liste des ingrédients nécessaires avec une quantité approximative réaliste (ex: "2 œufs", "200 g de saumon", "1 poignée d'épinards"), chacun classé dans une catégorie de courses (fruits_legumes, viande_poisson_oeufs, produits_laitiers, epicerie, condiments). Varie les repas d'un jour à l'autre, reste réaliste et simple à préparer.${
       teaser
         ? `
 

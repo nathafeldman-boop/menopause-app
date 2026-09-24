@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ShoppingCart } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveSubscription } from "@/lib/subscription";
@@ -8,6 +8,7 @@ import { generateWeeklyPlanForUser } from "@/lib/meal-plan";
 import { MealPlanView } from "@/components/meal-plan/meal-plan-view";
 import { RegeneratePlanButton } from "@/components/meal-plan/regenerate-plan-button";
 import { PaywallPrompt } from "@/components/billing/paywall-prompt";
+import { Button } from "@/components/ui/button";
 import { APP_NAME } from "@/lib/brand";
 import type { DayPlan } from "@/lib/ai/types";
 
@@ -47,6 +48,12 @@ export default async function PlanPage() {
           Un menu simple pour vos petits-déjeuners, déjeuners et dîners.
         </p>
       </div>
+
+      <Button asChild variant="outline" size="lg">
+        <Link href="/courses">
+          <ShoppingCart className="h-5 w-5" /> Voir ma liste de courses
+        </Link>
+      </Button>
 
       <MealPlanView days={days} isTeaser={plan.is_teaser} />
 

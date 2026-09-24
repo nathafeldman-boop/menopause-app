@@ -7,6 +7,7 @@ import type {
   GeneratedRecipesResult,
   WeeklyMealPlan,
   DayPlan,
+  PlannedMealIngredient,
 } from "./types";
 
 async function fakeDelay() {
@@ -175,47 +176,194 @@ export const mockProvider: AiProvider = {
   async generateWeeklyMealPlan(_profile, _todaysMeals, teaser) {
     await fakeDelay();
     const dayNames = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
-    const menu: Array<[string, string, string][]> = [
+    const ing = (text: string, category: PlannedMealIngredient["category"]): PlannedMealIngredient => ({
+      text,
+      category,
+    });
+    const menu: Array<[string, string, string, PlannedMealIngredient[]][]> = [
       [
-        ["Petit-déjeuner", "Yaourt grec, fruits rouges et amandes", "Source de calcium et de fibres pour bien démarrer."],
-        ["Déjeuner", "Saumon, quinoa et légumes rôtis", "Protéines et bonnes graisses, avec des légumes variés."],
-        ["Dîner", "Soupe de lentilles corail", "Léger le soir, riche en fibres et en protéines végétales."],
+        [
+          "Petit-déjeuner",
+          "Yaourt grec, fruits rouges et amandes",
+          "Source de calcium et de fibres pour bien démarrer.",
+          [
+            ing("2 yaourts grecs nature", "produits_laitiers"),
+            ing("1 poignée de fruits rouges", "fruits_legumes"),
+            ing("1 poignée d'amandes", "epicerie"),
+          ],
+        ],
+        [
+          "Déjeuner",
+          "Saumon, quinoa et légumes rôtis",
+          "Protéines et bonnes graisses, avec des légumes variés.",
+          [
+            ing("2 pavés de saumon", "viande_poisson_oeufs"),
+            ing("150 g de quinoa", "epicerie"),
+            ing("1 courgette", "fruits_legumes"),
+            ing("1 poivron", "fruits_legumes"),
+            ing("Huile d'olive", "condiments"),
+          ],
+        ],
+        [
+          "Dîner",
+          "Soupe de lentilles corail",
+          "Léger le soir, riche en fibres et en protéines végétales.",
+          [
+            ing("200 g de lentilles corail", "epicerie"),
+            ing("1 oignon", "fruits_legumes"),
+            ing("1 carotte", "fruits_legumes"),
+            ing("Cumin", "condiments"),
+          ],
+        ],
       ],
       [
-        ["Petit-déjeuner", "Porridge avoine et graines de lin", "Fibres douces pour le transit."],
-        ["Déjeuner", "Poulet rôti, patates douces et brocolis", "Un classique équilibré et rassasiant."],
-        ["Dîner", "Omelette aux épinards", "Rapide, riche en protéines et en fer."],
+        [
+          "Petit-déjeuner",
+          "Porridge avoine et graines de lin",
+          "Fibres douces pour le transit.",
+          [ing("80 g de flocons d'avoine", "epicerie"), ing("Lait ou boisson végétale", "produits_laitiers"), ing("1 c. à soupe de graines de lin", "epicerie")],
+        ],
+        [
+          "Déjeuner",
+          "Poulet rôti, patates douces et brocolis",
+          "Un classique équilibré et rassasiant.",
+          [
+            ing("2 filets de poulet", "viande_poisson_oeufs"),
+            ing("2 patates douces", "fruits_legumes"),
+            ing("1 brocoli", "fruits_legumes"),
+          ],
+        ],
+        [
+          "Dîner",
+          "Omelette aux épinards",
+          "Rapide, riche en protéines et en fer.",
+          [ing("4 œufs", "viande_poisson_oeufs"), ing("1 poignée d'épinards frais", "fruits_legumes"), ing("Sel, poivre", "condiments")],
+        ],
       ],
       [
-        ["Petit-déjeuner", "Tartines complètes, fromage frais", "Un peu de calcium pour la matinée."],
-        ["Déjeuner", "Bol de riz complet, œuf et légumes", "Simple, complet, facile à préparer à l'avance."],
-        ["Dîner", "Poêlée de courgettes et feta", "Léger avec une bonne source de calcium."],
+        [
+          "Petit-déjeuner",
+          "Tartines complètes, fromage frais",
+          "Un peu de calcium pour la matinée.",
+          [ing("4 tranches de pain complet", "epicerie"), ing("Fromage frais", "produits_laitiers")],
+        ],
+        [
+          "Déjeuner",
+          "Bol de riz complet, œuf et légumes",
+          "Simple, complet, facile à préparer à l'avance.",
+          [
+            ing("150 g de riz complet", "epicerie"),
+            ing("2 œufs", "viande_poisson_oeufs"),
+            ing("1 carotte râpée", "fruits_legumes"),
+            ing("Sauce soja", "condiments"),
+          ],
+        ],
+        [
+          "Dîner",
+          "Poêlée de courgettes et feta",
+          "Léger avec une bonne source de calcium.",
+          [ing("2 courgettes", "fruits_legumes"), ing("100 g de feta", "produits_laitiers"), ing("Huile d'olive", "condiments")],
+        ],
       ],
       [
-        ["Petit-déjeuner", "Smoothie banane, épinards et lait végétal", "Vitamines et fibres pour bien commencer."],
-        ["Déjeuner", "Cabillaud, riz et haricots verts", "Protéines maigres et légumes verts."],
-        ["Dîner", "Salade de pois chiches", "Protéines végétales, fraîche et rassasiante."],
+        [
+          "Petit-déjeuner",
+          "Smoothie banane, épinards et lait végétal",
+          "Vitamines et fibres pour bien commencer.",
+          [ing("1 banane", "fruits_legumes"), ing("1 poignée d'épinards", "fruits_legumes"), ing("Lait végétal", "produits_laitiers")],
+        ],
+        [
+          "Déjeuner",
+          "Cabillaud, riz et haricots verts",
+          "Protéines maigres et légumes verts.",
+          [
+            ing("2 filets de cabillaud", "viande_poisson_oeufs"),
+            ing("150 g de riz", "epicerie"),
+            ing("200 g de haricots verts", "fruits_legumes"),
+          ],
+        ],
+        [
+          "Dîner",
+          "Salade de pois chiches",
+          "Protéines végétales, fraîche et rassasiante.",
+          [
+            ing("1 boîte de pois chiches", "epicerie"),
+            ing("1 tomate", "fruits_legumes"),
+            ing("1/2 concombre", "fruits_legumes"),
+            ing("Huile d'olive, citron", "condiments"),
+          ],
+        ],
       ],
       [
-        ["Petit-déjeuner", "Yaourt nature et flocons d'avoine", "Simple et rassasiant."],
-        ["Déjeuner", "Gratin de courgettes à la ricotta", "Calcium et légumes dans un plat réconfortant."],
-        ["Dîner", "Velouté de potiron", "Léger, doux, riche en fibres."],
+        [
+          "Petit-déjeuner",
+          "Yaourt nature et flocons d'avoine",
+          "Simple et rassasiant.",
+          [ing("2 yaourts nature", "produits_laitiers"), ing("50 g de flocons d'avoine", "epicerie")],
+        ],
+        [
+          "Déjeuner",
+          "Gratin de courgettes à la ricotta",
+          "Calcium et légumes dans un plat réconfortant.",
+          [ing("3 courgettes", "fruits_legumes"), ing("200 g de ricotta", "produits_laitiers"), ing("Parmesan râpé", "produits_laitiers")],
+        ],
+        [
+          "Dîner",
+          "Velouté de potiron",
+          "Léger, doux, riche en fibres.",
+          [ing("500 g de potiron", "fruits_legumes"), ing("1 oignon", "fruits_legumes"), ing("Crème légère", "produits_laitiers")],
+        ],
       ],
       [
-        ["Petit-déjeuner", "Œufs brouillés et pain complet", "Bonne source de protéines du matin."],
-        ["Déjeuner", "Poêlée de crevettes, légumes et riz", "Rapide et équilibré."],
-        ["Dîner", "Soupe miso et tofu", "Léger et réconfortant."],
+        [
+          "Petit-déjeuner",
+          "Œufs brouillés et pain complet",
+          "Bonne source de protéines du matin.",
+          [ing("3 œufs", "viande_poisson_oeufs"), ing("2 tranches de pain complet", "epicerie")],
+        ],
+        [
+          "Déjeuner",
+          "Poêlée de crevettes, légumes et riz",
+          "Rapide et équilibré.",
+          [
+            ing("200 g de crevettes", "viande_poisson_oeufs"),
+            ing("150 g de riz", "epicerie"),
+            ing("1 poivron", "fruits_legumes"),
+            ing("1 courgette", "fruits_legumes"),
+          ],
+        ],
+        [
+          "Dîner",
+          "Soupe miso et tofu",
+          "Léger et réconfortant.",
+          [ing("Pâte miso", "condiments"), ing("200 g de tofu", "viande_poisson_oeufs"), ing("Algues wakamé", "epicerie")],
+        ],
       ],
       [
-        ["Petit-déjeuner", "Pancakes à la banane sans sucre ajouté", "Un plaisir simple du dimanche."],
-        ["Déjeuner", "Rôti de dinde, légumes de saison", "Repas familial équilibré."],
-        ["Dîner", "Soupe de légumes maison", "Léger pour finir la semaine."],
+        [
+          "Petit-déjeuner",
+          "Pancakes à la banane sans sucre ajouté",
+          "Un plaisir simple du dimanche.",
+          [ing("2 bananes", "fruits_legumes"), ing("3 œufs", "viande_poisson_oeufs"), ing("100 g de farine", "epicerie")],
+        ],
+        [
+          "Déjeuner",
+          "Rôti de dinde, légumes de saison",
+          "Repas familial équilibré.",
+          [ing("600 g de rôti de dinde", "viande_poisson_oeufs"), ing("Légumes de saison au choix", "fruits_legumes")],
+        ],
+        [
+          "Dîner",
+          "Soupe de légumes maison",
+          "Léger pour finir la semaine.",
+          [ing("Légumes de saison au choix", "fruits_legumes"), ing("1 bouillon de légumes", "condiments")],
+        ],
       ],
     ];
 
     const days: DayPlan[] = (teaser ? menu.slice(0, 1) : menu).map((meals, i) => ({
       day: dayNames[i],
-      meals: meals.map(([type, name, description]) => ({ type, name, description })),
+      meals: meals.map(([type, name, description, ingredients]) => ({ type, name, description, ingredients })),
     }));
 
     return { days } satisfies WeeklyMealPlan;

@@ -160,6 +160,7 @@ export type Database = {
           days: Json
           id: string
           is_teaser: boolean
+          shopping_list: Json
           user_id: string
         }
         Insert: {
@@ -167,6 +168,7 @@ export type Database = {
           days?: Json
           id?: string
           is_teaser?: boolean
+          shopping_list?: Json
           user_id: string
         }
         Update: {
@@ -174,6 +176,7 @@ export type Database = {
           days?: Json
           id?: string
           is_teaser?: boolean
+          shopping_list?: Json
           user_id?: string
         }
         Relationships: []

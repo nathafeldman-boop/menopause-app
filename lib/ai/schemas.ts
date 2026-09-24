@@ -153,8 +153,29 @@ export const weeklyMealPlanSchema = {
                 type: { type: "string", description: "Ex: 'Petit-déjeuner', 'Déjeuner', 'Dîner'" },
                 name: { type: "string" },
                 description: { type: "string", description: "Une phrase, sans calories/grammes précis" },
+                ingredients: {
+                  type: "array",
+                  description: "Ingrédients nécessaires pour ce repas, avec quantité approximative",
+                  items: {
+                    type: "object",
+                    properties: {
+                      text: { type: "string", description: "Ex: '4 courgettes', '200 g de saumon'" },
+                      category: {
+                        type: "string",
+                        enum: [
+                          "fruits_legumes",
+                          "viande_poisson_oeufs",
+                          "produits_laitiers",
+                          "epicerie",
+                          "condiments",
+                        ],
+                      },
+                    },
+                    required: ["text", "category"],
+                  },
+                },
               },
-              required: ["type", "name", "description"],
+              required: ["type", "name", "description", "ingredients"],
             },
           },
         },
