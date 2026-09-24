@@ -45,7 +45,13 @@ export function FoodCorrection({ mealId, food, index }: { mealId: string; food: 
         body: JSON.stringify({ foodIndex: index, correctedName: correctedName.trim() }),
       });
       if (res.ok) {
-        setCurrent({ ...current, name: correctedName.trim(), confidence: "high", userCorrected: true });
+        setCurrent({
+          ...current,
+          name: correctedName.trim(),
+          confidence: "high",
+          userCorrected: true,
+          possibleAlternatives: [],
+        });
         setEditing(false);
         setCustomValue("");
       }

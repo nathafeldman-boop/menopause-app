@@ -80,6 +80,7 @@ export default async function AbonnementPage() {
                 {new Date(subscription.paused_until).toLocaleDateString("fr-FR", {
                   day: "numeric",
                   month: "long",
+                  timeZone: "Europe/Paris",
                 })}
                 .
               </p>

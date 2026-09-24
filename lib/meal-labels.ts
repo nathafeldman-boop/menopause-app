@@ -11,8 +11,10 @@ export const LEVEL_LABELS: Record<string, string> = {
   unclear: "Difficile à évaluer",
 };
 
+import { currentHourParis } from "./timezone";
+
 export function getMealTimeLabel(isoDate: string): string {
-  const hour = new Date(isoDate).getHours();
+  const hour = currentHourParis(new Date(isoDate));
   if (hour < 11) return "Petit-déjeuner";
   if (hour < 15) return "Déjeuner";
   if (hour < 19) return "Goûter";
@@ -20,5 +22,9 @@ export function getMealTimeLabel(isoDate: string): string {
 }
 
 export function formatMealTime(isoDate: string): string {
-  return new Date(isoDate).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  return new Date(isoDate).toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Paris",
+  });
 }

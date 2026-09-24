@@ -42,7 +42,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const detectedFood = food.name;
   const updatedFoods = analysis.foods.map((f, i) =>
-    i === foodIndex ? { ...f, name: correctedName, confidence: "high" as const, userCorrected: true } : f
+    i === foodIndex
+      ? { ...f, name: correctedName, confidence: "high" as const, userCorrected: true, possibleAlternatives: [] }
+      : f
   );
   const updatedAnalysis = { ...analysis, foods: updatedFoods };
 

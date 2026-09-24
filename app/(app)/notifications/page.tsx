@@ -4,15 +4,17 @@ import { ArrowLeft, Bell } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
+import { todayDateStringParis } from "@/lib/timezone";
 
 export const metadata: Metadata = { title: "Notifications" };
 
 function formatWhen(iso: string): string {
   const date = new Date(iso);
-  const now = new Date();
-  const sameDay = date.toDateString() === now.toDateString();
-  if (sameDay) return date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-  return date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+  const sameDay = todayDateStringParis(date) === todayDateStringParis();
+  if (sameDay) {
+    return date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" });
+  }
+  return date.toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: "Europe/Paris" });
 }
 
 export default async function NotificationsPage() {
