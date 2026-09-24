@@ -177,16 +177,21 @@ export default async function DashboardPage() {
       </Link>
 
       <Card>
-        <CardContent className="flex items-center justify-between p-5">
-          <div>
-            <p className="text-sm text-muted-foreground">Cette semaine</p>
-            <p className="font-heading text-xl font-medium">
-              {mealsThisWeek ?? 0} repas analysé{(mealsThisWeek ?? 0) > 1 ? "s" : ""}
-            </p>
+        <CardContent className="flex flex-col gap-3 p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Cette semaine</p>
+              <p className="font-heading text-xl font-medium">
+                {mealsThisWeek ?? 0} repas analysé{(mealsThisWeek ?? 0) > 1 ? "s" : ""}
+              </p>
+            </div>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/resume">Voir mon résumé</Link>
+            </Button>
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/repas">Voir l&apos;historique</Link>
-          </Button>
+          <Link href="/repas" className="text-xs text-muted-foreground underline underline-offset-4">
+            Voir l&apos;historique complet
+          </Link>
         </CardContent>
       </Card>
     </div>
