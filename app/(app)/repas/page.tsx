@@ -5,22 +5,29 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { getScoreColorVar } from "@/lib/score";
 import { formatMealTime } from "@/lib/meal-labels";
+import { todayDateStringParis, startOfWeekDateStringParis } from "@/lib/timezone";
 
 export const metadata: Metadata = { title: "Mes repas" };
 
 const DAY_LETTERS = ["L", "M", "M", "J", "V", "S", "D"];
 
-function dayGroupLabel(date: Date): string {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
+function dateStringFromUtcParts(date: Date): string {
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+}
 
-  if (d.getTime() === today.getTime()) return "Aujourd'hui";
-  if (d.getTime() === yesterday.getTime()) return "Hier";
-  return date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short" });
+function dayGroupLabel(date: Date): string {
+  const dateStr = todayDateStringParis(date);
+  const todayStr = todayDateStringParis();
+  const yesterdayStr = todayDateStringParis(new Date(Date.now() - 24 * 60 * 60 * 1000));
+
+  if (dateStr === todayStr) return "Aujourd'hui";
+  if (dateStr === yesterdayStr) return "Hier";
+  return date.toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    timeZone: "Europe/Paris",
+  });
 }
 
 export default async function MealsHistoryPage() {
@@ -36,24 +43,12 @@ export default async function MealsHistoryPage() {
     .order("created_at", { ascending: false })
     .limit(50);
 
-  const now = new Date();
-  const startOfWeek = new Date(now);
-  const isoWeekday = (now.getDay() + 6) % 7; // 0 = lundi
-  startOfWeek.setDate(now.getDate() - isoWeekday);
-  startOfWeek.setHours(0, 0, 0, 0);
+  const startOfWeekDate = startOfWeekDateStringParis();
+  const [weekYear, weekMonth, weekDay] = startOfWeekDate.split("-").map(Number);
 
   const weekActivity = DAY_LETTERS.map((_, i) => {
-    const day = new Date(startOfWeek);
-    day.setDate(startOfWeek.getDate() + i);
-    const hasActivity = (meals ?? []).some((m) => {
-      const d = new Date(m.created_at);
-      return (
-        d.getFullYear() === day.getFullYear() &&
-        d.getMonth() === day.getMonth() &&
-        d.getDate() === day.getDate()
-      );
-    });
-    return hasActivity;
+    const dayDateStr = dateStringFromUtcParts(new Date(Date.UTC(weekYear, weekMonth - 1, weekDay + i)));
+    return (meals ?? []).some((m) => todayDateStringParis(new Date(m.created_at)) === dayDateStr);
   });
   const weekCount = weekActivity.filter(Boolean).length;
 

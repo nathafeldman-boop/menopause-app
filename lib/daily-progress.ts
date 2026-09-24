@@ -1,23 +1,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "./supabase/database.types";
-
-export const WEEKDAY_NAMES_FR = [
-  "Dimanche",
-  "Lundi",
-  "Mardi",
-  "Mercredi",
-  "Jeudi",
-  "Vendredi",
-  "Samedi",
-];
+import { todayWeekdayNameParis, todayDateStringParis } from "./timezone";
 
 export function todayWeekdayName() {
-  return WEEKDAY_NAMES_FR[new Date().getDay()];
+  return todayWeekdayNameParis();
 }
 
 export function todayDateString() {
-  return new Date().toISOString().slice(0, 10);
+  return todayDateStringParis();
 }
 
 export async function getTodayProgress(supabase: SupabaseClient<Database>, userId: string) {

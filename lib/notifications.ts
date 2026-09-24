@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./supabase/database.types";
 import type { DayPlan } from "./ai/types";
 import { todayWeekdayName } from "./daily-progress";
+import { currentHourParis, startOfDayParisIso, todayDateStringParis } from "./timezone";
 
 /** Pas de vraie notification push navigateur ici (service worker + permission + clé VAPID :
  * une décision d'infra séparée, hors scope ici). Ce sont des notifications strictement in-app :
@@ -23,8 +24,7 @@ export async function createNotification(
  * exclusifs : un dîner est prévu et pas encore fait → rappel ; sinon, aucune activité aujourd'hui
  * → petite relance vers SOS repas. */
 export async function ensureEveningNotification(supabase: SupabaseClient<Database>, userId: string) {
-  const now = new Date();
-  const hour = now.getHours();
+  const hour = currentHourParis();
   if (hour < 18 || hour > 22) return;
 
   const { data: profile } = await supabase
@@ -34,10 +34,8 @@ export async function ensureEveningNotification(supabase: SupabaseClient<Databas
     .single();
   if (!profile?.notifications_enabled) return;
 
-  const startOfDay = new Date(now);
-  startOfDay.setHours(0, 0, 0, 0);
-  const startOfDayIso = startOfDay.toISOString();
-  const todayDate = startOfDayIso.slice(0, 10);
+  const startOfDayIso = startOfDayParisIso();
+  const todayDate = todayDateStringParis();
 
   const { data: existing } = await supabase
     .from("notifications")

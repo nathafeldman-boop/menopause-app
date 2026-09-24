@@ -5,6 +5,7 @@ import { ArrowLeft, Camera, ChefHat, Smile, CalendarDays } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { startOfWeekParisIso, startOfWeekDateStringParis } from "@/lib/timezone";
 
 export const metadata: Metadata = { title: "Ta semaine en résumé" };
 
@@ -14,13 +15,8 @@ export default async function ResumePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const now = new Date();
-  const isoWeekday = (now.getDay() + 6) % 7; // 0 = lundi
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - isoWeekday);
-  startOfWeek.setHours(0, 0, 0, 0);
-  const startOfWeekIso = startOfWeek.toISOString();
-  const startOfWeekDate = startOfWeekIso.slice(0, 10);
+  const startOfWeekIso = startOfWeekParisIso();
+  const startOfWeekDate = startOfWeekDateStringParis();
 
   const [{ count: mealsCount }, { count: recipeScansCount }, { count: ingredientRecipesCount }, { data: progress }] =
     await Promise.all([
