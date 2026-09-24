@@ -71,7 +71,7 @@ export function IngredientsForm({ subscribed }: { subscribed: boolean }) {
             "Nous n'avons pas identifié d'ingrédients sur cette photo. Réessayez avec une photo nette de vos aliments."
           );
         } else {
-          setError(data.error || "Une erreur est survenue. Merci de réessayer.");
+          setError("Une erreur est survenue. Merci de réessayer.");
         }
         setIsSubmitting(false);
         return;

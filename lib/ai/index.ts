@@ -4,35 +4,13 @@ import type { AiProvider } from "./types";
 
 const hasKey = !!process.env.GEMINI_API_KEY;
 
-/** Enveloppe chaque méthode : si l'appel Gemini échoue (clé manquante, quota, erreur réseau),
- * on retombe sur une réponse simulée plutôt que de casser l'expérience utilisateur. */
-function withFallback<T extends (...args: never[]) => Promise<unknown>>(primary: T, fallback: T): T {
-  return (async (...args: Parameters<T>) => {
-    try {
-      return await primary(...args);
-    } catch (err) {
-      console.error("[ai] appel au fournisseur IA échoué, repli sur le mode simulé :", err);
-      return fallback(...args);
-    }
-  }) as T;
-}
-
-export const ai: AiProvider = hasKey
-  ? {
-      analyzeMealPhoto: withFallback(geminiProvider.analyzeMealPhoto, mockProvider.analyzeMealPhoto),
-      scanRecipePhoto: withFallback(geminiProvider.scanRecipePhoto, mockProvider.scanRecipePhoto),
-      adaptRecipe: withFallback(geminiProvider.adaptRecipe, mockProvider.adaptRecipe),
-      generateRecipesFromIngredients: withFallback(
-        geminiProvider.generateRecipesFromIngredients,
-        mockProvider.generateRecipesFromIngredients
-      ),
-      coachReply: withFallback(geminiProvider.coachReply, mockProvider.coachReply),
-      generateWeeklyMealPlan: withFallback(
-        geminiProvider.generateWeeklyMealPlan,
-        mockProvider.generateWeeklyMealPlan
-      ),
-    }
-  : mockProvider;
+/** Sans clé API (dev local uniquement), on utilise des réponses simulées.
+ * Avec une clé, on appelle toujours le vrai fournisseur : si l'appel échoue (quota, panne,
+ * clé invalide), l'erreur remonte telle quelle jusqu'aux routes API, qui savent déjà répondre
+ * par un message d'erreur clair. Masquer l'échec derrière une réponse simulée présenterait du
+ * contenu inventé, non lié à la photo/aux données envoyées, comme un vrai résultat — pire qu'une
+ * erreur honnête pour une utilisatrice abonnée. */
+export const ai: AiProvider = hasKey ? geminiProvider : mockProvider;
 
 export const AI_MODE = hasKey ? "gemini" : "mock";
 
