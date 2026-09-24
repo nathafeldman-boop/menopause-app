@@ -28,27 +28,85 @@ export const mockProvider: AiProvider = {
 
     return {
       mealDetected: true,
+      imageIssue: "",
+      visualInventory: [
+        "morceau rosé-orangé avec surface légèrement grillée",
+        "éléments verts variés, certains en feuilles, d'autres ronds",
+        "portion beige granuleuse à côté",
+        "quartiers orangés",
+      ],
+      foods: [
+        {
+          name: "saumon grillé",
+          category: "protein",
+          confidence: "high",
+          evidence: "morceau rosé-orangé avec surface grillée caractéristique",
+          preparation: "grillé",
+          quantityEstimate: "environ 100-130 g",
+          possibleAlternatives: [],
+        },
+        {
+          name: "quinoa",
+          category: "grain",
+          confidence: "medium",
+          evidence: "portion beige granuleuse, texture proche du quinoa ou du boulgour",
+          preparation: "cuit",
+          quantityEstimate: "portion moyenne",
+          possibleAlternatives: ["boulgour"],
+        },
+        {
+          name: "légumes verts variés",
+          category: "vegetable",
+          confidence: "high",
+          evidence: "plusieurs éléments verts en feuilles et en morceaux",
+          preparation: "",
+          quantityEstimate: "bonne portion",
+          possibleAlternatives: [],
+        },
+        {
+          name: "patate douce",
+          category: "vegetable",
+          confidence: "low",
+          evidence: "quartiers orangés, forme compatible avec patate douce ou carotte rôtie",
+          preparation: "rôti",
+          quantityEstimate: "petite portion",
+          possibleAlternatives: ["carotte rôtie"],
+        },
+      ],
       score,
-      mealName: pick(["Assiette repérée", "Repas composé", "Votre plat"], seed),
+      mealName: pick(["Saumon, quinoa et légumes", "Assiette repérée", "Votre plat"], seed),
       proteinFlag: pick(["present", "present", "unclear"], seed),
       vegFiberFlag: pick(["present", "unclear", "absent"], seed + 1),
       calciumFlag: pick(["unclear", "present", "absent"], seed + 2),
       carbsLevel: pick(["moderate", "low", "high"], seed + 3),
       fatLevel: pick(["moderate", "low"], seed + 4),
       sugarFlag: pick(["absent", "unclear"], seed + 5),
-      goodPoints: [
-        "Une bonne source de protéines semble présente sur l'assiette.",
-        "La composition paraît variée, c'est un bon réflexe.",
+      summary:
+        "Une assiette plutôt complète : une bonne source de protéines avec le saumon, des légumes variés, et une source de glucides avec le quinoa et la patate douce.",
+      positives: [
+        {
+          title: "Bonne source de protéines",
+          explanation: "Le saumon apporte des protéines de qualité et de bonnes matières grasses.",
+          relatedFood: "saumon grillé",
+        },
+        {
+          title: "Légumes variés",
+          explanation: "Plusieurs légumes différents apportent fibres et micronutriments.",
+          relatedFood: "légumes verts variés",
+        },
       ],
-      improvePoints: [
-        "Une portion de légumes supplémentaire apporterait plus de fibres.",
-        "Pensez à une source de calcium si elle n'est pas déjà présente (yaourt, fromage, amandes).",
+      improvements: [
+        {
+          title: "Deux sources de féculents",
+          explanation:
+            "Quinoa et patate douce sont tous les deux présents. Ce n'est pas un problème, mais si vous cherchez un repas plus léger, l'un des deux suffit.",
+          relatedFood: "quinoa",
+        },
       ],
-      suggestions: [
-        "Ajoutez une poignée de légumes verts ou une salade à ce repas.",
-        "Une petite portion de laitage ou d'oléagineux en complément pourrait être utile.",
-        "Un filet d'huile d'olive crue apporte de bonnes graisses.",
-      ],
+      personalizedTip: "Pour gagner du temps, préparez le quinoa à l'avance et gardez-le au frigo 2-3 jours.",
+      improvedVersion:
+        "Gardez le saumon, les légumes verts et une seule source de féculents (quinoa ou patate douce), avec un filet de citron.",
+      nextActionLabel: "Tu veux une version plus légère de ce repas ?",
     } satisfies MealAnalysisResult;
   },
 

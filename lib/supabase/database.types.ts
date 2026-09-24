@@ -139,6 +139,41 @@ export type Database = {
         }
         Relationships: []
       }
+      food_corrections: {
+        Row: {
+          corrected_food: string
+          created_at: string
+          detected_food: string
+          id: string
+          meal_analysis_id: string | null
+          user_id: string
+        }
+        Insert: {
+          corrected_food: string
+          created_at?: string
+          detected_food: string
+          id?: string
+          meal_analysis_id?: string | null
+          user_id: string
+        }
+        Update: {
+          corrected_food?: string
+          created_at?: string
+          detected_food?: string
+          id?: string
+          meal_analysis_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "food_corrections_meal_analysis_id_fkey"
+            columns: ["meal_analysis_id"]
+            isOneToOne: false
+            referencedRelation: "meal_analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ingredient_recipes: {
         Row: {
           created_at: string

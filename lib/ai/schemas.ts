@@ -1,5 +1,36 @@
 // JSON Schemas (sous-ensemble supporté par responseJsonSchema de l'API Gemini)
 
+const FOOD_CATEGORY_ENUM = [
+  "protein",
+  "vegetable",
+  "fruit",
+  "grain",
+  "legume",
+  "dairy",
+  "fat",
+  "sauce",
+  "herb_spice",
+  "drink",
+  "sweet",
+  "other",
+];
+
+const foodInsightSchema = {
+  type: "object",
+  properties: {
+    title: { type: "string", description: "Titre court, ex: 'Bonne source de protéines'" },
+    explanation: {
+      type: "string",
+      description: "Explique POURQUOI, en te basant sur ce qui a réellement été identifié — jamais générique",
+    },
+    relatedFood: {
+      type: "string",
+      description: "Nom de l'aliment de 'foods' concerné, chaîne vide si le point est général",
+    },
+  },
+  required: ["title", "explanation", "relatedFood"],
+};
+
 export const mealAnalysisSchema = {
   type: "object",
   properties: {
@@ -7,6 +38,51 @@ export const mealAnalysisSchema = {
       type: "boolean",
       description:
         "false si la photo ne montre PAS clairement un repas ou un aliment (table vide, objet, photo floue, personne, etc.)",
+    },
+    imageIssue: {
+      type: "string",
+      description:
+        "Raison si la photo est difficile à exploiter de façon fiable (ex: 'photo trop sombre', 'image floue', 'nourriture trop éloignée', 'plusieurs plats mélangés impossibles à distinguer'). Chaîne vide si la photo est exploitable normalement.",
+    },
+    visualInventory: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "ÉTAPE 1 — avant toute identification : liste ce que tu observes visuellement de façon brute (forme, couleur, texture, position), sans encore nommer précisément les aliments. Ex: 'morceau rose-orangé avec surface grillée', 'petits éléments verts ronds'.",
+    },
+    foods: {
+      type: "array",
+      description:
+        "ÉTAPE 2 — à partir de l'inventaire visuel ci-dessus, identifie chaque aliment distinct réellement visible. N'invente jamais un aliment qui n'a pas de trace dans visualInventory.",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string", description: "Ex: 'saumon grillé', 'possible poulet effiloché'" },
+          category: { type: "string", enum: FOOD_CATEGORY_ENUM },
+          confidence: {
+            type: "string",
+            enum: ["high", "medium", "low", "unknown"],
+            description:
+              "high = aucun doute raisonnable. medium = probable mais partiellement masqué/ambigu. low = deux aliments visuellement proches possibles (ex: thon/poulet effiloché, courgette/concombre). unknown = impossible à identifier.",
+          },
+          evidence: { type: "string", description: "Ce qui est concrètement visible qui justifie cette identification" },
+          preparation: {
+            type: "string",
+            description: "Ex: 'grillé', 'pané', 'en sauce', 'cru' — chaîne vide si non identifiable",
+          },
+          quantityEstimate: {
+            type: "string",
+            description:
+              "Qualitatif uniquement, jamais un chiffre présenté comme exact. Ex: 'environ 100-130 g', 'petite portion', 'grande portion'. Chaîne vide si aucune référence de taille ne permet d'estimer.",
+          },
+          possibleAlternatives: {
+            type: "array",
+            items: { type: "string" },
+            description: "0 à 3 alternatives plausibles, uniquement si confidence est 'low' ou 'unknown'",
+          },
+        },
+        required: ["name", "category", "confidence", "evidence", "preparation", "quantityEstimate", "possibleAlternatives"],
+      },
     },
     score: {
       type: "integer",
@@ -21,12 +97,41 @@ export const mealAnalysisSchema = {
     carbsLevel: { type: "string", enum: ["low", "moderate", "high", "unclear"] },
     fatLevel: { type: "string", enum: ["low", "moderate", "high", "unclear"] },
     sugarFlag: { type: "string", enum: ["present", "absent", "unclear"] },
-    goodPoints: { type: "array", items: { type: "string" }, description: "2 à 4 points positifs, phrases courtes" },
-    improvePoints: { type: "array", items: { type: "string" }, description: "1 à 3 points à améliorer, jamais culpabilisants" },
-    suggestions: { type: "array", items: { type: "string" }, description: "2 à 3 suggestions très concrètes" },
+    summary: {
+      type: "string",
+      description:
+        "2-3 phrases, personnalisées et spécifiques à CE repas précis (jamais une phrase générique réutilisable pour n'importe quelle photo).",
+    },
+    positives: {
+      type: "array",
+      items: foodInsightSchema,
+      description: "2 à 4 points positifs, chacun relié à un aliment réellement identifié dans 'foods'",
+    },
+    improvements: {
+      type: "array",
+      items: foodInsightSchema,
+      description:
+        "0 à 3 points d'amélioration, nuancés et jamais culpabilisants. Tableau vide si le repas est déjà cohérent — ne cherche jamais artificiellement un défaut.",
+    },
+    personalizedTip: {
+      type: "string",
+      description: "Un seul conseil concret et actionnable, tenant compte du profil de l'utilisatrice",
+    },
+    improvedVersion: {
+      type: "string",
+      description:
+        "Courte proposition concrète de version ajustée de ce repas précis (garder X, ajuster Y) — chaîne vide si rien à ajuster",
+    },
+    nextActionLabel: {
+      type: "string",
+      description: "Une question de suivi pertinente pour CE repas, ex: 'Tu veux une version plus légère de ce repas ?'",
+    },
   },
   required: [
     "mealDetected",
+    "imageIssue",
+    "visualInventory",
+    "foods",
     "score",
     "mealName",
     "proteinFlag",
@@ -35,9 +140,12 @@ export const mealAnalysisSchema = {
     "carbsLevel",
     "fatLevel",
     "sugarFlag",
-    "goodPoints",
-    "improvePoints",
-    "suggestions",
+    "summary",
+    "positives",
+    "improvements",
+    "personalizedTip",
+    "improvedVersion",
+    "nextActionLabel",
   ],
 };
 

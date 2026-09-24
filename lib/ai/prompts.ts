@@ -111,3 +111,11 @@ export function profileContextBlock(profile: UserProfileContext): string {
   if (lines.length === 0) return "Aucune information de profil disponible pour cette utilisatrice.";
   return `Profil de l'utilisatrice :\n${lines.join("\n")}`;
 }
+
+/** Corrections passées de cette utilisatrice sur des analyses précédentes — un SIGNAL contextuel,
+ * jamais une règle à appliquer automatiquement : l'identification doit toujours rester fondée sur
+ * ce qui est réellement visible sur la photo actuelle. */
+export function correctionsContextBlock(hints: string[]): string {
+  if (hints.length === 0) return "";
+  return `\nContexte (facultatif, à titre indicatif uniquement — ne remplace jamais ce que tu observes réellement sur CETTE photo) : par le passé, cette utilisatrice a déjà corrigé les identifications suivantes sur d'autres photos : ${hints.join("; ")}. Si tu hésites entre plusieurs aliments proches et que l'un d'eux correspond à ces corrections passées, tu peux le considérer comme légèrement plus probable — mais seulement si les preuves visuelles de la photo actuelle le permettent réellement.`;
+}

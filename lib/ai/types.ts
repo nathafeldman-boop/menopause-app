@@ -1,8 +1,44 @@
 export type Flag = "present" | "absent" | "unclear";
 export type Level = "low" | "moderate" | "high" | "unclear";
 
+export type FoodConfidence = "high" | "medium" | "low" | "unknown";
+
+export type FoodCategory =
+  | "protein"
+  | "vegetable"
+  | "fruit"
+  | "grain"
+  | "legume"
+  | "dairy"
+  | "fat"
+  | "sauce"
+  | "herb_spice"
+  | "drink"
+  | "sweet"
+  | "other";
+
+export type DetectedFood = {
+  name: string; // ex: "saumon grillé"
+  category: FoodCategory;
+  confidence: FoodConfidence;
+  evidence: string; // courte justification de ce qui est visuellement observé
+  preparation: string; // ex: "grillé", "" si non identifiable
+  quantityEstimate: string; // qualitatif, ex: "environ 100-130 g", "portion moyenne", "" si impossible à estimer
+  possibleAlternatives: string[]; // 0-3 alternatives, uniquement si confidence "low" ou "unknown"
+  userCorrected?: boolean; // true si ce champ a été modifié manuellement par l'utilisatrice après coup
+};
+
+export type FoodInsight = {
+  title: string;
+  explanation: string;
+  relatedFood: string; // nom de l'aliment concerné dans "foods", "" si général
+};
+
 export type MealAnalysisResult = {
   mealDetected: boolean; // false si la photo ne montre pas clairement un repas/aliment
+  imageIssue: string; // raison si la photo est difficile à exploiter (sombre, floue, trop loin...), "" sinon
+  visualInventory: string[]; // observations visuelles brutes, avant identification (forme, couleur, texture)
+  foods: DetectedFood[];
   score: number; // 0-100, équilibre général — n'a de sens que si mealDetected est true
   mealName: string;
   proteinFlag: Flag;
@@ -11,9 +47,12 @@ export type MealAnalysisResult = {
   carbsLevel: Level;
   fatLevel: Level;
   sugarFlag: Flag;
-  goodPoints: string[];
-  improvePoints: string[];
-  suggestions: string[];
+  summary: string; // vue d'ensemble courte et personnalisée
+  positives: FoodInsight[]; // 2-4, chacun relié à un aliment réellement identifié
+  improvements: FoodInsight[]; // 0-3, vide si rien à corriger
+  personalizedTip: string; // un conseil concret et actionnable
+  improvedVersion: string; // "si je devais améliorer ton assiette" — texte court structuré
+  nextActionLabel: string; // ex: "Tu veux une version plus légère de ce repas ?"
 };
 
 export type RecipeScanResult = {
@@ -121,7 +160,8 @@ export interface AiProvider {
   analyzeMealPhoto(
     imageBase64: string,
     mimeType: string,
-    profile: UserProfileContext
+    profile: UserProfileContext,
+    correctionHints: string[]
   ): Promise<MealAnalysisResult>;
 
   scanRecipePhoto(

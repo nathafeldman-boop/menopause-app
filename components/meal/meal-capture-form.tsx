@@ -44,7 +44,9 @@ export function MealCaptureForm() {
           setSubscriptionRequired(true);
         } else if (data.error === "no_meal_detected") {
           setError(
-            "Nous n'avons pas identifié de repas sur cette photo. Réessayez avec une photo de votre assiette, bien éclairée et cadrée de près."
+            data.reason
+              ? `${data.reason}. Réessayez avec une photo de votre assiette, bien éclairée et cadrée de près.`
+              : "Nous n'avons pas identifié de repas sur cette photo. Réessayez avec une photo de votre assiette, bien éclairée et cadrée de près."
           );
         } else {
           setError("Une erreur est survenue pendant l'analyse. Merci de réessayer.");

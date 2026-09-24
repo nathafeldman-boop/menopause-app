@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-import { SAFETY_GUARDRAILS, profileContextBlock } from "./prompts";
+import { SAFETY_GUARDRAILS, profileContextBlock, correctionsContextBlock } from "./prompts";
 import {
   mealAnalysisSchema,
   recipeScanSchema,
@@ -60,24 +60,41 @@ async function generateJson<T>(params: {
 }
 
 export const geminiProvider: AiProvider = {
-  async analyzeMealPhoto(imageBase64, mimeType, profile) {
+  async analyzeMealPhoto(imageBase64, mimeType, profile, correctionHints) {
     const prompt = `Voici une photo envoyée par une utilisatrice qui pense y avoir photographié son repas.
 
-ÉTAPE 1 — OBLIGATOIRE, à faire avant tout le reste : détermine si cette photo montre réellement un repas ou des aliments, avec certitude.
-Mets mealDetected à false si la photo montre : une table ou un plan de travail vide ou quasiment vide, de la vaisselle vide ou déjà terminée, un objet non alimentaire, une personne, un lieu, une image floue/illisible, ou tout ce qui n'est pas clairement de la nourriture.
-Mets mealDetected à true UNIQUEMENT si tu peux identifier avec certitude au moins un aliment ou plat sur la photo.
+Tu vas procéder en PLUSIEURS ÉTAPES DISTINCTES, sans les mélanger. Ne saute jamais directement à une identification sans être passée par l'étape précédente.
 
-Si mealDetected est false : mets score à 0, mealName à "", tous les flags à "unclear", goodPoints et suggestions à des tableaux vides, et improvePoints à un seul message clair du type : "Nous n'avons pas identifié de repas sur cette photo. Réessayez avec une photo de votre assiette." Ne poursuis pas avec une analyse nutritionnelle inventée.
+ÉTAPE 1 — Qualité de l'image et détection.
+Détermine si cette photo montre réellement un repas ou des aliments, avec certitude, et si elle est exploitable.
+Mets mealDetected à false si la photo montre : une table ou un plan de travail vide ou quasiment vide, de la vaisselle vide ou déjà terminée, un objet non alimentaire, une personne, un lieu, une image totalement floue/illisible, ou tout ce qui n'est pas clairement de la nourriture. Dans ce cas, remplis imageIssue avec la raison précise (ex: "aucune nourriture visible sur cette photo").
+Si de la nourriture est visible mais que la photo reste difficile à exploiter (trop sombre, floue, nourriture trop éloignée ou trop masquée, plusieurs plats mélangés de façon indistincte), garde mealDetected à true mais remplis imageIssue avec la raison — cela te rendra plus prudente dans les étapes suivantes.
+Si la photo est claire et exploitable, laisse imageIssue à "".
 
-Si mealDetected est true, poursuis normalement :
+Si mealDetected est false : mets score à 0, mealName à "", visualInventory et foods à des tableaux vides, tous les flags à "unclear", positives/improvements à des tableaux vides, summary à "", personalizedTip à "Réessayez avec une photo de votre assiette, bien éclairée et cadrée de près.", improvedVersion et nextActionLabel à "". Ne poursuis pas avec une analyse inventée.
 
-Règle la plus importante : décris UNIQUEMENT les aliments clairement identifiables sur cette photo précise. N'invente ou ne suppose jamais la présence d'un aliment que tu ne vois pas (ex : ne mentionne pas "trop de viande" si aucune viande n'est visible, ne dis pas "manque de légumes" si l'assiette est déjà majoritairement composée de légumes). Si l'assiette est composée à 90% d'un seul type d'aliment (ex : uniquement des légumes), tes retours doivent refléter cette réalité, pas un repas "standard" générique.
+Si mealDetected est true, poursuis avec les étapes suivantes :
+
+ÉTAPE 2 — Inventaire visuel brut (visualInventory).
+AVANT d'identifier quoi que ce soit, liste ce que tu observes concrètement : formes, couleurs, textures, positions dans l'assiette. Ne nomme pas encore d'aliments précis à ce stade, décris juste ce qui est visuellement là.
+
+ÉTAPE 3 — Identification (foods).
+À partir SEULEMENT de cet inventaire visuel, identifie chaque aliment distinct. Règle la plus importante : décris UNIQUEMENT les aliments qui ont une trace concrète dans ton inventaire visuel. N'invente ou ne suppose jamais la présence d'un aliment que tu ne vois pas.
+Sois particulièrement prudente sur les paires d'aliments visuellement proches (ex : poulet/dinde, thon/poulet effiloché, saumon/truite, courgette/concombre, feta/chèvre, yaourt/fromage blanc, riz/quinoa, patate douce/pomme de terre, brocoli/chou-fleur, pois chiches/haricots, tomate/poivron rouge, oignon rouge/échalote, crème fraîche/yaourt grec) : si tu hésites entre deux, mets confidence à "low" et liste les deux dans possibleAlternatives plutôt que de trancher arbitrairement.
+Pour les sauces ou préparations dont la composition n'est pas visible (ex: une sauce blanche crémeuse), décris ce qui EST visible ("sauce crémeuse blanche") avec confidence adaptée, mais n'invente jamais sa recette exacte (ne dis pas "sauce au yaourt et moutarde" si rien ne le confirme visuellement).
+Pour un plat composite dont l'intérieur n'est pas visible (lasagnes, quiche, gratin, curry, tarte...), identifie le plat par son nom si reconnaissable, avec une quantityEstimate qualitative, mais n'énumère pas d'ingrédients internes que tu ne peux pas voir.
+${
+  correctionHints.length > 0 ? correctionsContextBlock(correctionHints) : ""
+}
+
+ÉTAPE 4 — Analyse.
+Si l'assiette est composée à 90% d'un seul type d'aliment (ex : uniquement des légumes), tes retours doivent refléter cette réalité, pas un repas "standard" générique.
 
 ${profileContextBlock(profile)}
 
 Évalue, en te basant strictement sur ce qui est visible : équilibre général (score 0-100), présence de protéines, présence de végétaux/fibres, sources potentielles de calcium, niveau de glucides, niveau de matières grasses, présence d'aliments très sucrés si visibles. Si un élément n'est pas déterminable visuellement, indique "unclear" plutôt que de deviner.
 
-Donne 2 à 4 points déjà positifs, 1 à 3 points à améliorer (formulés sans culpabiliser), et 2 à 3 suggestions très concrètes et réalisables — tous cohérents avec ce qui est réellement visible sur la photo.`;
+Écris une vue d'ensemble courte et spécifique à CE repas (summary), 2 à 4 points positifs et 0 à 3 points d'amélioration reliés chacun à un aliment réellement identifié (jamais une affirmation générique du type "repas équilibré" sans expliquer pourquoi), un conseil concret et personnalisé selon le profil ci-dessus (personalizedTip), une courte proposition de version ajustée de ce repas précis si pertinent (improvedVersion), et une question de suivi pertinente (nextActionLabel). Si le repas est déjà cohérent, dis-le plutôt que d'inventer un défaut.`;
 
     return generateJson<MealAnalysisResult>({
       prompt,

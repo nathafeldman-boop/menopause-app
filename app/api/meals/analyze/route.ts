@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 import { getProfile, toAiContext } from "@/lib/profile";
+import { getCorrectionHints } from "@/lib/food-corrections";
 import { ai } from "@/lib/ai";
 import { hasActiveSubscription } from "@/lib/subscription";
 
@@ -42,11 +43,17 @@ export async function POST(request: Request) {
     const mimeType = file.type || "image/jpeg";
     const base64 = buffer.toString("base64");
 
-    const profile = await getProfile(supabase, user.id);
-    const analysis = await ai.analyzeMealPhoto(base64, mimeType, toAiContext(profile));
+    const [profile, correctionHints] = await Promise.all([
+      getProfile(supabase, user.id),
+      getCorrectionHints(supabase, user.id),
+    ]);
+    const analysis = await ai.analyzeMealPhoto(base64, mimeType, toAiContext(profile), correctionHints);
 
     if (!analysis.mealDetected) {
-      return NextResponse.json({ error: "no_meal_detected" }, { status: 422 });
+      return NextResponse.json(
+        { error: "no_meal_detected", reason: analysis.imageIssue || undefined },
+        { status: 422 }
+      );
     }
 
     const ext = mimeType.split("/")[1] || "jpg";
@@ -57,6 +64,15 @@ export async function POST(request: Request) {
       upsert: false,
     });
     if (uploadError) throw uploadError;
+
+    // Colonnes conservées pour compat avec l'ancien affichage : dérivées ici (formatage pur,
+    // aucun appel IA supplémentaire) des champs riches de `analysis`, qui restent la source de
+    // vérité dans `raw_ai`.
+    const goodPoints = analysis.positives.map((p) => (p.explanation ? `${p.title} : ${p.explanation}` : p.title));
+    const improvePoints = analysis.improvements.map((i) =>
+      i.explanation ? `${i.title} : ${i.explanation}` : i.title
+    );
+    const suggestions = [analysis.personalizedTip, analysis.improvedVersion].filter(Boolean);
 
     const { data: row, error: insertError } = await supabase
       .from("meal_analyses")
@@ -72,9 +88,9 @@ export async function POST(request: Request) {
         carbs_level: analysis.carbsLevel,
         fat_level: analysis.fatLevel,
         sugar_flag: analysis.sugarFlag,
-        good_points: analysis.goodPoints,
-        improve_points: analysis.improvePoints,
-        suggestions: analysis.suggestions,
+        good_points: goodPoints,
+        improve_points: improvePoints,
+        suggestions,
         raw_ai: analysis,
       })
       .select("id")
