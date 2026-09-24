@@ -264,6 +264,7 @@ export type Database = {
           days: Json
           id: string
           is_teaser: boolean
+          restaurant_days: string[]
           shopping_list: Json
           user_id: string
         }
@@ -272,6 +273,7 @@ export type Database = {
           days?: Json
           id?: string
           is_teaser?: boolean
+          restaurant_days?: string[]
           shopping_list?: Json
           user_id: string
         }
@@ -280,6 +282,7 @@ export type Database = {
           days?: Json
           id?: string
           is_teaser?: boolean
+          restaurant_days?: string[]
           shopping_list?: Json
           user_id?: string
         }

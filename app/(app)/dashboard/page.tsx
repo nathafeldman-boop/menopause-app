@@ -44,7 +44,7 @@ export default async function DashboardPage() {
     getTodayProgress(supabase, user!.id),
     supabase
       .from("meal_plans")
-      .select("days")
+      .select("days, restaurant_days")
       .eq("user_id", user!.id)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -52,7 +52,9 @@ export default async function DashboardPage() {
   ]);
 
   const days = (plan?.days ?? []) as unknown as DayPlan[];
-  const todayMeals = days.find((d) => d.day === todayWeekdayName())?.meals ?? [];
+  const todayName = todayWeekdayName();
+  const isRestaurantDayToday = plan?.restaurant_days?.includes(todayName) ?? false;
+  const todayMeals = isRestaurantDayToday ? [] : days.find((d) => d.day === todayName)?.meals ?? [];
   const goalLabel = profile?.goal ? GOAL_LABELS[profile.goal] ?? profile.goal : null;
 
   return (
@@ -64,7 +66,12 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <TodayPlanCard meals={todayMeals} initialDone={todayProgress.meals_done} goalLabel={goalLabel} />
+      <TodayPlanCard
+        meals={todayMeals}
+        initialDone={todayProgress.meals_done}
+        goalLabel={goalLabel}
+        isRestaurantDay={isRestaurantDayToday}
+      />
 
       <Link href="/sos">
         <Card className="border-primary/30 bg-primary/5 transition-colors hover:bg-primary/10">

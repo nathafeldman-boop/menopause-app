@@ -24,7 +24,7 @@ export default async function PlanPage() {
     hasActiveSubscription(supabase, user!.id),
     supabase
       .from("meal_plans")
-      .select("days, is_teaser")
+      .select("days, is_teaser, restaurant_days")
       .eq("user_id", user!.id)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -55,7 +55,7 @@ export default async function PlanPage() {
         </Link>
       </Button>
 
-      <MealPlanView days={days} isTeaser={plan.is_teaser} />
+      <MealPlanView days={days} isTeaser={plan.is_teaser} initialRestaurantDays={plan.restaurant_days} />
 
       {plan.is_teaser &&
         (subscribed ? (

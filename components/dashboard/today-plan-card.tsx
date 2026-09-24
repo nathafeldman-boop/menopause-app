@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 
+import { UtensilsCrossed } from "lucide-react";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -12,10 +14,12 @@ export function TodayPlanCard({
   meals,
   initialDone,
   goalLabel,
+  isRestaurantDay = false,
 }: {
   meals: PlannedMeal[];
   initialDone: string[];
   goalLabel: string | null;
+  isRestaurantDay?: boolean;
 }) {
   const [done, setDone] = useState(new Set(initialDone));
 
@@ -47,7 +51,12 @@ export function TodayPlanCard({
       <CardContent className="p-5">
         <h2 className="font-heading text-lg font-medium">Aujourd&apos;hui</h2>
 
-        {meals.length === 0 ? (
+        {isRestaurantDay ? (
+          <p className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+            <UtensilsCrossed className="h-4 w-4 shrink-0" /> Vous mangez au restaurant aujourd&apos;hui —
+            pas de repas prévu.
+          </p>
+        ) : meals.length === 0 ? (
           <div className="mt-3 flex flex-col items-start gap-2">
             <p className="text-sm text-muted-foreground">
               Générez votre plan de la semaine pour voir vos repas du jour.

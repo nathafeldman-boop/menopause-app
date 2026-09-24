@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
   const { data: plan, error: fetchError } = await supabase
     .from("meal_plans")
-    .select("id, days")
+    .select("id, days, restaurant_days")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(1)
@@ -57,7 +57,10 @@ export async function POST(request: Request) {
 
     const { error: updateError } = await supabase
       .from("meal_plans")
-      .update({ days: updatedDays, shopping_list: buildShoppingList(updatedDays) })
+      .update({
+        days: updatedDays,
+        shopping_list: buildShoppingList(updatedDays, plan.restaurant_days),
+      })
       .eq("id", plan.id);
 
     if (updateError) throw updateError;

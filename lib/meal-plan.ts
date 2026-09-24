@@ -7,10 +7,14 @@ import { hasActiveSubscription } from "./subscription";
 import { ai } from "./ai";
 import type { ShoppingListItem, WeeklyMealPlan } from "./ai/types";
 
-export function buildShoppingList(days: WeeklyMealPlan["days"]): ShoppingListItem[] {
+export function buildShoppingList(
+  days: WeeklyMealPlan["days"],
+  excludeDays: string[] = []
+): ShoppingListItem[] {
   const seen = new Map<string, ShoppingListItem>();
 
   for (const day of days) {
+    if (excludeDays.includes(day.day)) continue;
     for (const meal of day.meals) {
       for (const ingredient of meal.ingredients ?? []) {
         const key = ingredient.text.trim().toLowerCase();
@@ -49,7 +53,7 @@ export async function generateWeeklyPlanForUser(
       shopping_list: buildShoppingList(plan.days),
       is_teaser: !subscribed,
     })
-    .select("id, days, is_teaser, shopping_list")
+    .select("id, days, is_teaser, shopping_list, restaurant_days")
     .single();
 
   if (error) throw error;
