@@ -10,6 +10,7 @@ import {
   CalendarDays,
   ShoppingCart,
   LifeBuoy,
+  Heart,
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
@@ -145,6 +146,16 @@ export default async function DashboardPage() {
                 <ShoppingCart className="h-5 w-5" />
               </div>
               <p className="font-medium leading-snug">Liste de courses</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/favoris">
+          <Card className="h-full transition-colors hover:bg-muted/60">
+            <CardContent className="flex flex-col gap-3 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/15 text-secondary">
+                <Heart className="h-5 w-5" />
+              </div>
+              <p className="font-medium leading-snug">Mes favoris</p>
             </CardContent>
           </Card>
         </Link>

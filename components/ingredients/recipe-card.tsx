@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, Image as ImageIcon } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { cn } from "@/lib/utils";
 import type { GeneratedRecipe } from "@/lib/ai/types";
 
@@ -40,7 +41,7 @@ export function RecipeCard({ recipe }: { recipe: GeneratedRecipe }) {
             ))}
           </ul>
           <h3 className="mb-1.5 text-sm font-medium">Étapes</h3>
-          <ol className="flex flex-col gap-2 text-sm">
+          <ol className="mb-4 flex flex-col gap-2 text-sm">
             {recipe.steps.map((step, i) => (
               <li key={i} className="flex gap-2">
                 <span className="font-medium text-primary">{i + 1}.</span>
@@ -48,6 +49,15 @@ export function RecipeCard({ recipe }: { recipe: GeneratedRecipe }) {
               </li>
             ))}
           </ol>
+          <FavoriteButton
+            recipe={{
+              title: recipe.name,
+              time: recipe.time,
+              ingredients: recipe.ingredients,
+              steps: recipe.steps,
+              source: "ingredients",
+            }}
+          />
         </CardContent>
       )}
     </Card>

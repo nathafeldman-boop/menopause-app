@@ -7,6 +7,7 @@ import { RotateCcw } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { cn } from "@/lib/utils";
 import type { GeneratedRecipe } from "@/lib/ai/types";
 
@@ -165,6 +166,17 @@ export function SosFlow() {
             </div>
           )}
           <p className={cn("text-sm text-muted-foreground", isTeaser && "italic")}>{suggestion.whyFits}</p>
+          {!isTeaser && (
+            <FavoriteButton
+              recipe={{
+                title: suggestion.name,
+                time: suggestion.time,
+                ingredients: suggestion.ingredients,
+                steps: suggestion.steps,
+                source: "sos",
+              }}
+            />
+          )}
         </CardContent>
       </Card>
 

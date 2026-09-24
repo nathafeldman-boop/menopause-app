@@ -12,6 +12,7 @@ import { ScoreGauge } from "@/components/meal/score-gauge";
 import { AdaptRecipeButton } from "@/components/recipe/adapt-recipe-button";
 import { PaywallPrompt } from "@/components/billing/paywall-prompt";
 import { LockedContent } from "@/components/billing/locked-content";
+import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { getFitScoreLabel } from "@/lib/score";
 import { APP_NAME } from "@/lib/brand";
 import type { AdaptedIngredient } from "@/lib/ai/types";
@@ -238,6 +239,19 @@ export default async function RecipeResultPage({ params }: { params: Promise<{ i
         )}
         {recipe.summary && <p className="mt-2 text-muted-foreground">{recipe.summary}</p>}
       </div>
+
+      {!recipe.is_teaser && (
+        <FavoriteButton
+          recipe={{
+            title: recipe.title ?? "Recette",
+            time: extracted.time,
+            servings: extracted.servings,
+            ingredients: extracted.ingredients ?? [],
+            steps: extracted.steps ?? [],
+            source: "recipe_scan",
+          }}
+        />
+      )}
 
       {adapted ? (
         <Tabs defaultValue="adaptee">
