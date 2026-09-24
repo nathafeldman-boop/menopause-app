@@ -59,3 +59,52 @@ export async function cancelTestPlanAction() {
   revalidatePath("/profil");
   revalidatePath("/dashboard");
 }
+
+/** Met l'abonnement en pause pour N jours (reprise automatique à l'échéance, en MODE TEST). */
+export async function pauseTestPlanAction(days: 7 | 14 | 30) {
+  if (!TEST_BILLING_ENABLED) {
+    throw new Error("Le paiement réel n'est pas encore configuré.");
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("unauthorized");
+
+  const pausedUntil = new Date();
+  pausedUntil.setDate(pausedUntil.getDate() + days);
+
+  const { error } = await supabase
+    .from("subscriptions")
+    .update({ status: "paused", paused_until: pausedUntil.toISOString() })
+    .eq("user_id", user.id);
+  if (error) throw error;
+
+  revalidatePath("/abonnement");
+  revalidatePath("/profil");
+  revalidatePath("/dashboard");
+}
+
+/** Reprend un abonnement en pause avant l'échéance prévue (MODE TEST). */
+export async function resumeTestPlanAction() {
+  if (!TEST_BILLING_ENABLED) {
+    throw new Error("Le paiement réel n'est pas encore configuré.");
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("unauthorized");
+
+  const { error } = await supabase
+    .from("subscriptions")
+    .update({ status: "active", paused_until: null })
+    .eq("user_id", user.id);
+  if (error) throw error;
+
+  revalidatePath("/abonnement");
+  revalidatePath("/profil");
+  revalidatePath("/dashboard");
+}
