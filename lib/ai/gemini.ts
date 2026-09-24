@@ -7,14 +7,18 @@ import {
   adaptedRecipeSchema,
   ingredientRecipesSchema,
   weeklyMealPlanSchema,
+  replaceMealSchema,
+  sosMealSchema,
 } from "./schemas";
 import type {
   AiProvider,
   MealAnalysisResult,
   RecipeScanResult,
   AdaptedRecipe,
+  GeneratedRecipe,
   GeneratedRecipesResult,
   WeeklyMealPlan,
+  PlannedMeal,
   UserProfileContext,
   CoachMessage,
 } from "./types";
@@ -191,5 +195,47 @@ Donne les 7 jours de la semaine (Lundi à Dimanche), chacun avec ses 3 repas.`
     }`;
 
     return generateJson<WeeklyMealPlan>({ prompt, schema: weeklyMealPlanSchema });
+  },
+
+  async replaceMeal(day, mealIndex, profile) {
+    const meal = day.meals[mealIndex];
+    const otherMeals = day.meals
+      .filter((_, i) => i !== mealIndex)
+      .map((m) => `${m.type} : ${m.name}`)
+      .join(", ");
+
+    const prompt = `Une utilisatrice veut remplacer un repas de son plan de la semaine (${day.day}, ${meal.type} : "${meal.name}") car elle ne l'aime pas ou ne l'a plus envie.
+
+${profileContextBlock(profile)}
+
+Les autres repas déjà prévus ce jour-là : ${otherMeals || "aucun autre repas prévu"}.
+
+Propose un NOUVEAU repas de type "${meal.type}" pour remplacer celui-ci, différent du précédent, adapté au profil, avec un nom, une description en une phrase (sans calories/grammes précis inventés), et la liste des ingrédients nécessaires avec une quantité approximative réaliste, chacun classé dans une catégorie de courses (fruits_legumes, viande_poisson_oeufs, produits_laitiers, epicerie, condiments).`;
+
+    return generateJson<PlannedMeal>({ prompt, schema: replaceMealSchema });
+  },
+
+  async suggestSosMeal(input, profile, teaser) {
+    const availableLine = input.available
+      ? `Ce qu'elle a sous la main : ${input.available}.`
+      : "Elle n'a rien précisé de particulier qu'elle a sous la main.";
+
+    const prompt = `Une utilisatrice ne sait pas quoi manger et a besoin d'une idée immédiate.
+
+Temps disponible : ${input.time}.
+Envie : ${input.craving}.
+${availableLine}
+
+${profileContextBlock(profile)}
+
+Propose UNE SEULE idée de repas réalisable dans le temps indiqué, correspondant à l'envie exprimée, en utilisant si possible ce qu'elle a sous la main (des ingrédients de base courants comme sel, huile, poivre peuvent être supposés disponibles). Donne un nom, un temps approximatif, la liste des ingrédients, des étapes claires et numérotées, et une phrase expliquant pourquoi ça correspond à sa demande et à son profil.${
+      teaser
+        ? `
+
+IMPORTANT — mode aperçu gratuit (utilisatrice non abonnée) : donne uniquement les 2 premiers ingrédients dans "ingredients" et laisse "steps" à un tableau vide.`
+        : ""
+    }`;
+
+    return generateJson<GeneratedRecipe>({ prompt, schema: sosMealSchema });
   },
 };

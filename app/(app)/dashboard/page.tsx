@@ -9,6 +9,7 @@ import {
   ChevronRight,
   CalendarDays,
   ShoppingCart,
+  LifeBuoy,
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
@@ -63,6 +64,21 @@ export default async function DashboardPage() {
       </div>
 
       <TodayPlanCard meals={todayMeals} initialDone={todayProgress.meals_done} goalLabel={goalLabel} />
+
+      <Link href="/sos">
+        <Card className="border-primary/30 bg-primary/5 transition-colors hover:bg-primary/10">
+          <CardContent className="flex items-center gap-4 p-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <LifeBuoy className="h-5 w-5" />
+            </div>
+            <div className="flex-1">
+              <p className="font-medium">SOS, je ne sais pas quoi manger</p>
+              <p className="text-sm text-muted-foreground">Une idée en 3 questions</p>
+            </div>
+            <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+          </CardContent>
+        </Card>
+      </Link>
 
       <CheckInCard alreadyDone={!!todayProgress.mood} />
 

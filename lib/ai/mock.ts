@@ -7,6 +7,7 @@ import type {
   GeneratedRecipesResult,
   WeeklyMealPlan,
   DayPlan,
+  PlannedMeal,
   PlannedMealIngredient,
 } from "./types";
 
@@ -367,5 +368,42 @@ export const mockProvider: AiProvider = {
     }));
 
     return { days } satisfies WeeklyMealPlan;
+  },
+
+  async replaceMeal(day, mealIndex) {
+    await fakeDelay();
+    const meal = day.meals[mealIndex];
+    return {
+      type: meal.type,
+      name: `${meal.type} alternatif`,
+      description: "Une autre option simple et équilibrée, à votre goût.",
+      ingredients: [
+        { text: "Une source de protéines au choix", category: "viande_poisson_oeufs" },
+        { text: "Une portion de légumes de saison", category: "fruits_legumes" },
+        { text: "Un féculent au choix", category: "epicerie" },
+      ],
+    } satisfies PlannedMeal;
+  },
+
+  async suggestSosMeal(input, _profile, teaser) {
+    await fakeDelay();
+    const ingredients = [
+      input.available ? `Ce que vous avez : ${input.available}` : "Ce que vous avez sous la main",
+      "Un filet d'huile d'olive",
+      "Sel, poivre, herbes au choix",
+    ];
+    return {
+      name: `Idée rapide - ${input.time}`,
+      time: input.time,
+      ingredients: teaser ? ingredients.slice(0, 2) : ingredients,
+      steps: teaser
+        ? []
+        : [
+            "Préparez les ingrédients disponibles.",
+            "Faites cuire à feu moyen quelques minutes.",
+            "Assaisonnez et servez aussitôt.",
+          ],
+      whyFits: `Adapté à votre envie "${input.craving}" et au temps dont vous disposez.`,
+    } satisfies GeneratedRecipe;
   },
 };

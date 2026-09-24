@@ -146,4 +146,12 @@ export interface AiProvider {
     todaysMeals: string,
     teaser: boolean
   ): Promise<WeeklyMealPlan>;
+
+  replaceMeal(day: DayPlan, mealIndex: number, profile: UserProfileContext): Promise<PlannedMeal>;
+
+  suggestSosMeal(
+    input: { time: string; craving: string; available: string },
+    profile: UserProfileContext,
+    teaser: boolean
+  ): Promise<GeneratedRecipe>;
 }

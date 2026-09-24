@@ -7,7 +7,7 @@ import { hasActiveSubscription } from "./subscription";
 import { ai } from "./ai";
 import type { ShoppingListItem, WeeklyMealPlan } from "./ai/types";
 
-function buildShoppingList(days: WeeklyMealPlan["days"]): ShoppingListItem[] {
+export function buildShoppingList(days: WeeklyMealPlan["days"]): ShoppingListItem[] {
   const seen = new Map<string, ShoppingListItem>();
 
   for (const day of days) {
