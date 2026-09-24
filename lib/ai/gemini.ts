@@ -85,6 +85,17 @@ async function generateJson<T>(params: {
   return JSON.parse(text) as T;
 }
 
+const HOUSEHOLD_SIZE_LABELS: Record<string, string> = {
+  "1": "1 personne",
+  "2": "2 personnes",
+  "3+": "3 personnes ou plus",
+};
+
+function householdSizeLine(profile: UserProfileContext): string {
+  const label = HOUSEHOLD_SIZE_LABELS[profile.householdSize ?? ""] ?? "2 personnes (par défaut, non précisé)";
+  return `Elle cuisine pour ${label}. Les quantités d'ingrédients doivent être dimensionnées pour ce nombre de personnes, pas pour une seule.`;
+}
+
 export const geminiProvider: AiProvider = {
   async analyzeMealPhoto(imageBase64, mimeType, profile, correctionHints) {
     const prompt = `Voici une photo envoyée par une utilisatrice qui pense y avoir photographié son repas.
@@ -232,8 +243,9 @@ Réponds au dernier message de l'utilisatrice en tant que coach alimentaire bien
 
 ${profileContextBlock(profile)}
 ${todaysMealsLine}
+${householdSizeLine(profile)}
 
-Pour chaque repas : un type (Petit-déjeuner/Déjeuner/Dîner), un nom de plat, une description en une phrase (sans calories ni grammes précis inventés), et la liste des ingrédients nécessaires avec une quantité approximative réaliste (ex: "2 œufs", "200 g de saumon", "1 poignée d'épinards"), chacun classé dans une catégorie de courses (fruits_legumes, viande_poisson_oeufs, produits_laitiers, epicerie, condiments). Varie les repas d'un jour à l'autre, reste réaliste et simple à préparer.${
+Pour chaque repas : un type (Petit-déjeuner/Déjeuner/Dîner), un nom de plat, une description en une phrase (sans calories ni grammes précis inventés), et la liste des ingrédients nécessaires avec une quantité approximative réaliste ET dimensionnée pour le nombre de personnes ci-dessus (ex: "2 œufs" pour 1 personne devient "4 œufs" pour 2 personnes), chacun classé dans une catégorie de courses (fruits_legumes, viande_poisson_oeufs, produits_laitiers, epicerie, condiments). Varie les repas d'un jour à l'autre, reste réaliste et simple à préparer.${
       teaser
         ? `
 
@@ -256,6 +268,7 @@ Donne les 7 jours de la semaine (Lundi à Dimanche), chacun avec ses 3 repas.`
     const prompt = `Une utilisatrice veut remplacer un repas de son plan de la semaine (${day.day}, ${meal.type} : "${meal.name}") car elle ne l'aime pas ou ne l'a plus envie.
 
 ${profileContextBlock(profile)}
+${householdSizeLine(profile)}
 
 Les autres repas déjà prévus ce jour-là : ${otherMeals || "aucun autre repas prévu"}.
 
