@@ -29,6 +29,30 @@ function client() {
   return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 }
 
+// Gemini renvoie régulièrement des 503 "high demand" / 429 "resource exhausted" transitoires,
+// distincts d'une vraie panne (clé invalide, quota épuisé) : on retente quelques fois avant de
+// laisser l'erreur remonter honnêtement, plutôt que de faire échouer l'utilisatrice au premier pic.
+const RETRYABLE_STATUSES = [429, 503];
+const RETRY_DELAYS_MS = [500, 1500];
+
+function isRetryableError(err: unknown): boolean {
+  const status = (err as { status?: number } | null)?.status;
+  if (typeof status === "number" && RETRYABLE_STATUSES.includes(status)) return true;
+  const message = err instanceof Error ? err.message : String(err);
+  return /UNAVAILABLE|RESOURCE_EXHAUSTED/i.test(message);
+}
+
+async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt >= RETRY_DELAYS_MS.length || !isRetryableError(err)) throw err;
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAYS_MS[attempt]));
+    }
+  }
+}
+
 async function generateJson<T>(params: {
   prompt: string;
   schema: object;
@@ -42,17 +66,19 @@ async function generateJson<T>(params: {
   }
   parts.push({ text: params.prompt });
 
-  const response = await client().models.generateContent({
-    model: MODEL,
-    contents: [{ role: "user", parts }],
-    config: {
-      systemInstruction: SAFETY_GUARDRAILS,
-      responseMimeType: "application/json",
-      responseJsonSchema: params.schema,
-      // Basse température : on veut une lecture fidèle de l'image, pas de créativité.
-      temperature: 0.2,
-    },
-  });
+  const response = await withRetry(() =>
+    client().models.generateContent({
+      model: MODEL,
+      contents: [{ role: "user", parts }],
+      config: {
+        systemInstruction: SAFETY_GUARDRAILS,
+        responseMimeType: "application/json",
+        responseJsonSchema: params.schema,
+        // Basse température : on veut une lecture fidèle de l'image, pas de créativité.
+        temperature: 0.2,
+      },
+    })
+  );
 
   const text = response.text;
   if (!text) throw new Error("Réponse vide du modèle IA");
@@ -186,11 +212,13 @@ ${history}
 
 Réponds au dernier message de l'utilisatrice en tant que coach alimentaire bienveillant. Reste concret, actionnable, chaleureux, et concis (quelques phrases, pas un roman). Si la question sort du cadre alimentaire (ex: symptôme médical), reste prudent et renvoie vers un professionnel de santé sans détailler de diagnostic.`;
 
-    const response = await client().models.generateContent({
-      model: MODEL,
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      config: { systemInstruction: SAFETY_GUARDRAILS },
-    });
+    const response = await withRetry(() =>
+      client().models.generateContent({
+        model: MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: { systemInstruction: SAFETY_GUARDRAILS },
+      })
+    );
 
     return response.text ?? "Désolé, je n'ai pas pu générer de réponse. Pouvez-vous reformuler ?";
   },
