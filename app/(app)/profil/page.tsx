@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/actions/auth";
+import { NotificationToggle } from "@/components/profile/notification-toggle";
 import { APP_NAME } from "@/lib/brand";
 import { GOAL_LABELS } from "@/lib/labels";
 
@@ -154,6 +155,15 @@ export default async function ProfilePage() {
                 : "—"
             }
           />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Notifications</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <NotificationToggle initialEnabled={profile?.notifications_enabled ?? true} />
         </CardContent>
       </Card>
 

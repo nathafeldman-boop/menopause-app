@@ -16,6 +16,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/profile";
 import { getTodayProgress, todayWeekdayName } from "@/lib/daily-progress";
+import { ensureEveningNotification } from "@/lib/notifications";
 import { GOAL_LABELS } from "@/lib/labels";
 import { TodayPlanCard } from "@/components/dashboard/today-plan-card";
 import { CheckInCard } from "@/components/dashboard/checkin-card";
@@ -49,6 +50,7 @@ export default async function DashboardPage() {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    ensureEveningNotification(supabase, user!.id),
   ]);
 
   const days = (plan?.days ?? []) as unknown as DayPlan[];

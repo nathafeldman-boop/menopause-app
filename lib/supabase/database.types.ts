@@ -288,6 +288,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          href: string | null
+          id: string
+          kind: string
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          href?: string | null
+          id?: string
+          kind?: string
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          href?: string | null
+          id?: string
+          kind?: string
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           activity_level: string | null
@@ -306,6 +339,7 @@ export type Database = {
           id: string
           important_note: string | null
           menopause_stage: string | null
+          notifications_enabled: boolean
           onboarding_completed: boolean
           recipe_preference: string | null
           sleep_quality: string | null
@@ -334,6 +368,7 @@ export type Database = {
           id: string
           important_note?: string | null
           menopause_stage?: string | null
+          notifications_enabled?: boolean
           onboarding_completed?: boolean
           recipe_preference?: string | null
           sleep_quality?: string | null
@@ -362,6 +397,7 @@ export type Database = {
           id?: string
           important_note?: string | null
           menopause_stage?: string | null
+          notifications_enabled?: boolean
           onboarding_completed?: boolean
           recipe_preference?: string | null
           sleep_quality?: string | null

@@ -16,9 +16,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect("/login");
   }
 
-  const [profile, subscribed] = await Promise.all([
+  const [profile, subscribed, { count: unreadCount }] = await Promise.all([
     getProfile(supabase, user.id),
     hasActiveSubscription(supabase, user.id),
+    supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("read", false),
   ]);
 
   if (!profile?.onboarding_completed) {
@@ -27,7 +32,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <AppHeader subscribed={subscribed} />
+      <AppHeader subscribed={subscribed} unreadCount={unreadCount ?? 0} />
       <div className="mx-auto w-full max-w-md flex-1 px-4 pb-24 pt-6">{children}</div>
       <BottomNav />
     </div>
