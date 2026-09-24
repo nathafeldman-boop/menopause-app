@@ -33,7 +33,7 @@ function client() {
 // distincts d'une vraie panne (clé invalide, quota épuisé) : on retente quelques fois avant de
 // laisser l'erreur remonter honnêtement, plutôt que de faire échouer l'utilisatrice au premier pic.
 const RETRYABLE_STATUSES = [429, 503];
-const RETRY_DELAYS_MS = [500, 1500];
+const RETRY_DELAYS_MS = [500, 1500, 3000, 5000];
 
 function isRetryableError(err: unknown): boolean {
   const status = (err as { status?: number } | null)?.status;
