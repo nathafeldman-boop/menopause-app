@@ -79,13 +79,10 @@ export default async function ProfilePage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const profile = await getProfile(supabase, user!.id);
-
-  const { data: subscription } = await supabase
-    .from("subscriptions")
-    .select("plan, status")
-    .eq("user_id", user!.id)
-    .single();
+  const [profile, { data: subscription }] = await Promise.all([
+    getProfile(supabase, user!.id),
+    supabase.from("subscriptions").select("plan, status").eq("user_id", user!.id).single(),
+  ]);
   const isActive = subscription?.status === "active";
 
   return (

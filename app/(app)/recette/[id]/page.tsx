@@ -30,10 +30,15 @@ type Adapted = {
 export default async function RecipeResultPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { data: recipe } = await supabase.from("recipe_scans").select("*").eq("id", id).single();
+  const [
+    {
+      data: { user },
+    },
+    { data: recipe },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("recipe_scans").select("*").eq("id", id).single(),
+  ]);
 
   if (!recipe) notFound();
 

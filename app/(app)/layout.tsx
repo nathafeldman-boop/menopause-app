@@ -16,13 +16,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect("/login");
   }
 
-  const profile = await getProfile(supabase, user.id);
+  const [profile, subscribed] = await Promise.all([
+    getProfile(supabase, user.id),
+    hasActiveSubscription(supabase, user.id),
+  ]);
 
   if (!profile?.onboarding_completed) {
     redirect("/onboarding");
   }
-
-  const subscribed = await hasActiveSubscription(supabase, user.id);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

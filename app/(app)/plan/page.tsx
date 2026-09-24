@@ -19,15 +19,16 @@ export default async function PlanPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const subscribed = await hasActiveSubscription(supabase, user!.id);
-
-  const { data: existing } = await supabase
-    .from("meal_plans")
-    .select("days, is_teaser")
-    .eq("user_id", user!.id)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const [subscribed, { data: existing }] = await Promise.all([
+    hasActiveSubscription(supabase, user!.id),
+    supabase
+      .from("meal_plans")
+      .select("days, is_teaser")
+      .eq("user_id", user!.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   const plan = existing ?? (await generateWeeklyPlanForUser(supabase, user!.id));
   const days = plan.days as unknown as DayPlan[];
