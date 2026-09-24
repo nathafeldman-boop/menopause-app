@@ -174,7 +174,7 @@ export interface AiProvider {
   adaptRecipe(recipe: RecipeScanResult, profile: UserProfileContext): Promise<AdaptedRecipe>;
 
   generateRecipesFromIngredients(
-    input: { ingredients?: string[]; image?: { data: string; mimeType: string } },
+    input: { ingredients?: string[]; image?: { data: string; mimeType: string }; isLeftovers?: boolean },
     profile: UserProfileContext,
     teaser: boolean
   ): Promise<GeneratedRecipesResult>;

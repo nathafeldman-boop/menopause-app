@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PhotoPicker } from "@/components/photo/photo-picker";
 
@@ -15,6 +16,7 @@ export function IngredientsForm({ subscribed }: { subscribed: boolean }) {
   const [chips, setChips] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [photo, setPhoto] = useState<Blob | null>(null);
+  const [isLeftovers, setIsLeftovers] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,6 +62,7 @@ export function IngredientsForm({ subscribed }: { subscribed: boolean }) {
     const formData = new FormData();
     if (finalChips.length > 0) formData.append("ingredients", JSON.stringify(finalChips));
     if (photo) formData.append("photo", photo, "ingredients.jpg");
+    if (isLeftovers) formData.append("isLeftovers", "true");
 
     try {
       const res = await fetch("/api/recipes/from-ingredients", { method: "POST", body: formData });
@@ -128,6 +131,11 @@ export function IngredientsForm({ subscribed }: { subscribed: boolean }) {
           />
         </TabsContent>
       </Tabs>
+
+      <label className="flex items-center gap-2 text-sm">
+        <Checkbox checked={isLeftovers} onChange={(e) => setIsLeftovers(e.target.checked)} />
+        Ce sont des restes déjà cuisinés (ex : poulet d&apos;hier)
+      </label>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 

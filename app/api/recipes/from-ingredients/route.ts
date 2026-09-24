@@ -18,6 +18,7 @@ export async function POST(request: Request) {
   const formData = await request.formData();
   const ingredientsRaw = formData.get("ingredients");
   const photo = formData.get("photo");
+  const isLeftovers = formData.get("isLeftovers") === "true";
 
   let ingredients: string[] = [];
   if (typeof ingredientsRaw === "string" && ingredientsRaw.trim()) {
@@ -44,7 +45,7 @@ export async function POST(request: Request) {
 
     const profile = await getProfile(supabase, user.id);
     const result = await ai.generateRecipesFromIngredients(
-      { ingredients, image },
+      { ingredients, image, isLeftovers },
       toAiContext(profile),
       !subscribed
     );

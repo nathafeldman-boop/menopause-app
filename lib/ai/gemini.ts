@@ -148,19 +148,23 @@ Donne la version adaptée complète : titre, un nouveau score d'adéquation (0-1
 
   async generateRecipesFromIngredients(input, profile, teaser) {
     const ingredientsLine = input.ingredients?.length
-      ? `L'utilisatrice a saisi ces ingrédients disponibles : ${input.ingredients.join(", ")}. C'est une saisie texte : mets toujours ingredientsDetected à true.`
-      : `L'utilisatrice a fourni une photo de ses ingrédients disponibles (frigo, placard, plan de travail).
+      ? `L'utilisatrice a saisi ces ${input.isLeftovers ? "restes déjà cuisinés" : "ingrédients disponibles"} : ${input.ingredients.join(", ")}. C'est une saisie texte : mets toujours ingredientsDetected à true.`
+      : `L'utilisatrice a fourni une photo de ${input.isLeftovers ? "restes déjà cuisinés" : "ses ingrédients disponibles (frigo, placard, plan de travail)"}.
 
-ÉTAPE 1 — OBLIGATOIRE, à faire avant tout le reste : détermine si cette photo montre réellement des aliments ou ingrédients, avec certitude. Mets ingredientsDetected à false si la photo ne montre clairement aucun aliment (table vide, objet non alimentaire, personne, image floue/illisible). Si ingredientsDetected est false, mets recipes à un tableau vide et ne poursuis pas. Sinon, identifie les ingrédients visuellement.`;
+ÉTAPE 1 — OBLIGATOIRE, à faire avant tout le reste : détermine si cette photo montre réellement des aliments, avec certitude. Mets ingredientsDetected à false si la photo ne montre clairement aucun aliment (table vide, objet non alimentaire, personne, image floue/illisible). Si ingredientsDetected est false, mets recipes à un tableau vide et ne poursuis pas. Sinon, identifie ce qui est visible.`;
 
-    const prompt = `${ingredientsLine}
+    const leftoversNote = input.isLeftovers
+      ? `\n\nIMPORTANT : il s'agit de restes DÉJÀ CUISINÉS, pas d'ingrédients bruts. Propose des façons de les réutiliser ou transformer (ex : un reste de poulet rôti peut devenir une salade, un wrap, un gratin) plutôt que des recettes qui supposeraient de les cuisiner depuis le début. Les étapes doivent partir du principe que ces aliments sont déjà cuits.`
+      : "";
+
+    const prompt = `${ingredientsLine}${leftoversNote}
 
 ${profileContextBlock(profile)}
 
 ${
   teaser
-    ? `IMPORTANT — mode aperçu gratuit (utilisatrice non abonnée) : propose UNE SEULE recette complète (pas plus), réalisable principalement avec ces ingrédients (des ingrédients de base courants comme sel, huile, poivre peuvent être supposés disponibles). Nom, temps approximatif, liste d'ingrédients, étapes claires et numérotées, et une phrase expliquant pourquoi elle correspond au profil de l'utilisatrice.`
-    : `Propose exactement 3 recettes réalisables principalement avec ces ingrédients (des ingrédients de base courants comme sel, huile, poivre peuvent être supposés disponibles). Pour chaque recette : nom, temps approximatif, liste d'ingrédients, étapes claires et numérotées en texte, et une phrase expliquant pourquoi elle correspond au profil de l'utilisatrice.`
+    ? `IMPORTANT — mode aperçu gratuit (utilisatrice non abonnée) : propose UNE SEULE recette complète (pas plus), réalisable principalement avec ces ${input.isLeftovers ? "restes" : "ingrédients"} (des ingrédients de base courants comme sel, huile, poivre peuvent être supposés disponibles). Nom, temps approximatif, liste d'ingrédients, étapes claires et numérotées, et une phrase expliquant pourquoi elle correspond au profil de l'utilisatrice.`
+    : `Propose exactement 3 recettes réalisables principalement avec ces ${input.isLeftovers ? "restes" : "ingrédients"} (des ingrédients de base courants comme sel, huile, poivre peuvent être supposés disponibles). Pour chaque recette : nom, temps approximatif, liste d'ingrédients, étapes claires et numérotées en texte, et une phrase expliquant pourquoi elle correspond au profil de l'utilisatrice.`
 }`;
 
     return generateJson<GeneratedRecipesResult>({
